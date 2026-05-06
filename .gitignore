@@ -1,0 +1,32 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Test and coverage output
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Type checkers and linters
+.mypy_cache/
+.ruff_cache/
+
+# Local environment files
+.env
+.env.*
+
+# Local tool state
+.codex
+.agents/
+
+# OS and editor files
+.DS_Store
+.vscode/
+.idea/
