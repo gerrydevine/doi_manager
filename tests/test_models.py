@@ -1,5 +1,6 @@
 import uuid
 import unittest
+from datetime import datetime
 from unittest.mock import patch
 
 from models import (
@@ -1847,8 +1848,8 @@ class MetadataTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             Metadata(item_identifier, [item_creator], [item_title], item_publisher)
 
-    def test_metadata_requires_publication_year(self):
-        """Checks that a resource publication year is mandatory."""
+    def test_metadata_defaults_publication_year_to_current_year(self):
+        """Checks that a resource publication year defaults to the current year."""
         item_identifier = Identifier(
             identifier_value="10.123/example",
             identifier_type_attr="doi",
@@ -1860,14 +1861,18 @@ class MetadataTest(unittest.TestCase):
         item_title = Title(title="Example resource")
         item_publisher = Publisher(name="Example Publisher")
 
-        with self.assertRaises(TypeError):
-            Metadata(
+        with patch("models.datetime") as mock_datetime:
+            mock_datetime.now.return_value.year = datetime.now().year
+
+            item_metadata = Metadata(
                 identifier=item_identifier,
                 creators=[item_creator],
                 titles=[item_title],
                 publisher=item_publisher,
                 types=self.example_types(),
             )
+
+        self.assertEqual(item_metadata.publication_year, str(datetime.now().year))
 
     def test_metadata_requires_types(self):
         """Checks that a resource types object is mandatory."""

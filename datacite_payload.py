@@ -23,6 +23,7 @@ def generate_datacite_payload(record: Record, doi_prefix: str) -> dict:
             "resourceTypeGeneral": metadata.types.resource_type_general,
         },
         "language": metadata.language,
+        "url": f"https://unsw_metadata/{record.identifier}",
     }
 
     if metadata.identifier is not None and metadata.identifier.identifier_value:

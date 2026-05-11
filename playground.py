@@ -1,5 +1,7 @@
+import random
 from config import DATACITE_URL, DOI_PREFIX
 from datacite_client import allocate_doi
+from landing_page_utils import generate_landing_page
 from models import (
     Affiliation,
     AlternateIdentifier,
@@ -22,10 +24,27 @@ from models import (
     Rights,
 )
 
-# Create an affiliation that can be attached to people or organizations.
-item_affiliation = Affiliation(
-    identifier="https://ror.org/03yrm5c26",
-    name="Example University",
+TITLES = [
+    "Thermo Fisher Scientific Orbitrap Exploris 240",
+    "Agilent Technologies 6545 Q-TOF LC/MS",
+    "Waters Xevo G2-XS QTof",
+    "Bruker timsTOF Pro",
+    "Shimadzu Nexera X2 UHPLC",
+    "Bio-Rad CFX96 Touch Real-Time PCR System",
+    "PerkinElmer Lambda 365 UV/Vis Spectrophotometer",
+    "Leica Microsystems DM6 B Upright Microscope",
+    "ZEISS LSM 980 Confocal Microscope",
+]
+
+
+# Create some affiliations that can be attached to people or organizations.
+affiliation_1 = Affiliation(
+    identifier="https://ror.org/03r8z3t63",
+    name="UNSW Sydney",
+)
+affiliation_2 = Affiliation(
+    identifier="https://ror.org/01ej9dk98",
+    name="The University of Melbourne",
 )
 
 # Create an optional alternate identifier for the resource.
@@ -38,21 +57,42 @@ item_alternate_identifier_2 = AlternateIdentifier(
     alternate_identifier="XYZ12345",
 )
 
-# Create an optional related identifier for a linked resource.
-item_related_identifier = RelatedIdentifier(
-    related_identifier="10.123/example-related",
+# Create optional related identifiers for linked resources.
+item_related_identifier_1 = RelatedIdentifier(
+    related_identifier="https://doi.org/10.123/5435493",
     related_identifier_type="DOI",
     relation_type="References",
     resource_type_general="Dataset",
     relation_type_information="Referenced dataset",
 )
+item_related_identifier_2 = RelatedIdentifier(
+    related_identifier="https://doi.org/10.123/2836829",
+    related_identifier_type="DOI",
+    relation_type="IsSupplementTo",
+    resource_type_general="Text",
+    relation_type_information="Supplementary instrument documentation",
+)
+item_related_identifier_3 = RelatedIdentifier(
+    related_identifier="https://example.com/instruments/example-manual",
+    related_identifier_type="URL",
+    relation_type="Documents",
+    resource_type_general="Instrument",
+    relation_type_information="Instrument manual",
+)
 
-# Create a creator with an ORCID name identifier.
-creator_identifier = "https://orcid.org/0000-0002-1825-0097"
-item_creator = Creator(
+# Create creators with an ORCID name identifier.
+creator_1 = Creator(
     creator_name="Ada Lovelace",
     name_type="Personal",
-    name_identifiers=[creator_identifier],
+    name_identifiers=["https://orcid.org/0000-0002-1825-0097"],
+    affiliations=[affiliation_1, affiliation_2],
+)
+
+creator_2 = Creator(
+    creator_name="Alan Turing",
+    name_type="Personal",
+    name_identifiers=["https://orcid.org/0000-0002-1825-0098"],
+    affiliations=[affiliation_1],
 )
 
 # Create an optional contributor with an ORCID name identifier and affiliation.
@@ -62,12 +102,12 @@ item_contributor = Contributor(
     name_type="Personal",
     contributor_type="Researcher",
     name_identifiers=[contributor_identifier],
-    affiliations=[item_affiliation],
+    affiliations=[affiliation_1],
 )
 
 # Create multiple titles. The first overrides the default language.
-item_title_1 = Title(title="Example resource title", lang="fr")
-item_title_2 = Title(title="Example resource subtitle", type="Subtitle")
+item_title_1 = Title(title=random.choice(TITLES), lang="fr")
+item_title_2 = Title(title="Metadata documentation", type="Subtitle")
 
 # Create the required resource type metadata.
 item_types = Types(
@@ -76,11 +116,11 @@ item_types = Types(
 )
 
 # Create optional subjects for the resource.
-item_subject_1 = Subject(subject="Computer science")
+item_subject_1 = Subject(subject="Global warming")
 item_subject_2 = Subject(
-    subject="Metadata",
-    subject_scheme="Keyword",
-    classification_code="META",
+    subject="Climate change processes",
+    subject_scheme="ANZSRC Fields of Research",
+    classification_code="370201",
 )
 
 # Create optional dates for the resource.
@@ -143,9 +183,9 @@ item_geolocation_4 = GeoLocation(
 
 # Create the single publisher required by the resource.
 item_publisher = Publisher(
-    name="Example Publisher",
-    identifier="https://ror.org/03yrm5c26",
-    lang="sp",
+    name="UNSW Sydney",
+    identifier="https://ror.org/03r8z3t63",
+    lang="en",
 )
 
 # Create optional rights for the resource.
@@ -162,19 +202,36 @@ item_funding_reference_1 = FundingReference(
     award_uri="https://example.com/awards/AWD-123",
 )
 
+# Create a record and assign the metadata to it.
+record = Record()
+
+# Create an alternate identifier for the record UUID itself.
+item_alternate_identifier_record = AlternateIdentifier(
+    alternate_identifier_type="local UNSW identifier",
+    alternate_identifier=record.identifier,
+)
+
 # Assemble the metadata from its required child objects.
 metadata = Metadata(
-    creators=[item_creator],
+    creators=[creator_1, creator_2],
     titles=[item_title_1, item_title_2],
     publisher=item_publisher,
-    publication_year="2026",
+    # publication_year="2026",
     types=item_types,
     language="en",
     subjects=[item_subject_1, item_subject_2],
     contributors=[item_contributor],
     dates=[item_date_1, item_date_2],
-    alternate_identifiers=[item_alternate_identifier_1, item_alternate_identifier_2],
-    related_identifiers=[item_related_identifier],
+    alternate_identifiers=[
+        item_alternate_identifier_1,
+        item_alternate_identifier_2,
+        item_alternate_identifier_record,
+    ],
+    related_identifiers=[
+        item_related_identifier_1,
+        item_related_identifier_2,
+        item_related_identifier_3,
+    ],
     sizes=["1 GB", "2 GB"],
     formats=["text/csv", "application/json"],
     version="1.0",
@@ -184,8 +241,6 @@ metadata = Metadata(
     rights_list=[item_rights_1, item_rights_2]
 )
 
-# Create a record and assign the metadata to it.
-record = Record()
 record.metadata = metadata
 
 # Inspect the record identifier and assigned metadata.
@@ -213,21 +268,25 @@ print(
 )
 print(f"Alternate identifier 2: {metadata.alternate_identifiers[1].alternate_identifier}")
 
-# Inspect the first related identifier.
-print(f"Related identifier: {metadata.related_identifiers[0].related_identifier}")
-print(
-    "Related identifier type: "
-    f"{metadata.related_identifiers[0].related_identifier_type}"
-)
-print(f"Related identifier relation: {metadata.related_identifiers[0].relation_type}")
-print(
-    "Related identifier resource type general: "
-    f"{metadata.related_identifiers[0].resource_type_general}"
-)
-print(
-    "Related identifier relation information: "
-    f"{metadata.related_identifiers[0].relation_type_information}"
-)
+# Inspect the related identifiers.
+for index, related_identifier in enumerate(metadata.related_identifiers, start=1):
+    print(f"Related identifier {index}: {related_identifier.related_identifier}")
+    print(
+        f"Related identifier {index} type: "
+        f"{related_identifier.related_identifier_type}"
+    )
+    print(
+        f"Related identifier {index} relation: "
+        f"{related_identifier.relation_type}"
+    )
+    print(
+        f"Related identifier {index} resource type general: "
+        f"{related_identifier.resource_type_general}"
+    )
+    print(
+        f"Related identifier {index} relation information: "
+        f"{related_identifier.relation_type_information}"
+    )
 
 # Inspect the first creator.
 print(f"Creator name: {metadata.creators[0].creator_name}")
@@ -347,3 +406,8 @@ print(f"Rights 1 identifier: {metadata.rights_list[0].rights_identifier}")
 print(f"Rights 1 URI: {metadata.rights_list[0].rights_uri}")
 print(f"Rights 2 identifier: {metadata.rights_list[1].rights_identifier}")
 print(f"Rights 2 URI: {metadata.rights_list[1].rights_uri}")
+
+
+# Gnerate a landing page for the record.
+generate_landing_page(record)
+print(f"Landing Page: {record.identifier}.html")

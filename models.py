@@ -602,8 +602,8 @@ class Metadata:
         creators: list[Creator],
         titles: list[Title],
         publisher: Publisher,
-        publication_year: str,
         types: Types,
+        publication_year: str | None = None,
         identifier: Identifier | None = None,
         language: str = "en",
         subjects: list[Subject] | None = None,
@@ -619,6 +619,9 @@ class Metadata:
         funding_references: list[FundingReference] | None = None,
         rights_list: list[Rights] | None = None,
     ):
+        if publication_year is None:
+            publication_year = str(datetime.now().year)
+
         if not isinstance(publication_year, str):
             raise TypeError("publication_year must be a string")
 
@@ -814,4 +817,3 @@ class Record:
             raise AttributeError("identifier is read-only")
 
         super().__setattr__(name, value)
-
