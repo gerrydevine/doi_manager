@@ -505,8 +505,10 @@ class Creator:
 
         self.creator_name = creator_name
         self.name_type = name_type
-        self.name_identifiers = list(name_identifiers)
-        self.affiliations = list(affiliations)
+        # self.name_identifiers = list(name_identifiers)
+        self.name_identifiers = name_identifiers
+        # self.affiliations = list(affiliations)
+        self.affiliations = affiliations
 
 
 class Contributor:

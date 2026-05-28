@@ -189,7 +189,7 @@ class MetadataTest(unittest.TestCase):
             name_type="Personal",
             name_identifiers=[
                 "https://orcid.org/0000-0001-2345-6789",
-                "https://https://ror.org/12345",
+                "https://ror.org/12345",
             ],
         )
 
@@ -197,7 +197,7 @@ class MetadataTest(unittest.TestCase):
             item_creator.name_identifiers,
             [
                 "https://orcid.org/0000-0001-2345-6789",
-                "https://https://ror.org/12345",
+                "https://ror.org/12345",
             ],
         )
 
@@ -318,7 +318,7 @@ class MetadataTest(unittest.TestCase):
             contributor_type="Researcher",
             name_identifiers=[
                 "https://orcid.org/0000-0001-2345-6789",
-                "https://https://ror.org/12345",
+                "https://ror.org/12345",
             ],
         )
 
@@ -326,7 +326,7 @@ class MetadataTest(unittest.TestCase):
             item_contributor.name_identifiers,
             [
                 "https://orcid.org/0000-0001-2345-6789",
-                "https://https://ror.org/12345",
+                "https://ror.org/12345",
             ],
         )
 

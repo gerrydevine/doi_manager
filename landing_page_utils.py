@@ -1,7 +1,6 @@
 import datetime
 import os
 from pathlib import Path
-from jinja2 import Template
 from dotenv import load_dotenv
 # import pkg_resources
 # from github import Github

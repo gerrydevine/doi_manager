@@ -160,7 +160,8 @@ RELATION_TYPE_VALUES = [
 # Allowed URL prefixes for creator name identifiers.
 CREATOR_NAME_IDENTIFIER_PREFIXES = [
     "https://orcid.org/",
-    "https://https://ror.org/",
+    "https://ror.org/",
+    "https://isni.org/"
 ]
 
 # Allowed URL prefixes for affiliation identifiers.

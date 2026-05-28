@@ -241,14 +241,19 @@ metadata = Metadata(
     rights_list=[item_rights_1, item_rights_2]
 )
 
+
+# Attach the record metadata to the record
 record.metadata = metadata
+
+# Allocate a DOI through DataCite and store it on the record metadata.
+allocated_identifier = allocate_doi(record, DOI_PREFIX, DATACITE_URL)
+
 
 # Inspect the record identifier and assigned metadata.
 print(f"Record identifier: {record.identifier}")
 print(f"Record metadata identifier before DOI allocation: {record.metadata.identifier}")
 
-# Allocate a DOI through DataCite and store it on the record metadata.
-allocated_identifier = allocate_doi(record, DOI_PREFIX, DATACITE_URL)
+
 print(f"Allocated DOI: {allocated_identifier.identifier_value}")
 print(f"Record metadata identifier after DOI allocation: {record.metadata.identifier.identifier_value}")
 
@@ -408,6 +413,6 @@ print(f"Rights 2 identifier: {metadata.rights_list[1].rights_identifier}")
 print(f"Rights 2 URI: {metadata.rights_list[1].rights_uri}")
 
 
-# Gnerate a landing page for the record.
+# Generate a landing page for the record.
 generate_landing_page(record)
 print(f"Landing Page: {record.identifier}.html")

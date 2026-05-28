@@ -133,10 +133,11 @@ def _identifier_scheme(identifier: str) -> tuple[str, str | None]:
     if identifier.startswith("https://orcid.org/"):
         return "ORCID", "https://orcid.org"
 
-    if identifier.startswith("https://ror.org/") or identifier.startswith(
-        "https://https://ror.org/"
-    ):
+    if identifier.startswith("https://ror.org/"):
         return "ROR", "https://ror.org"
+
+    if identifier.startswith("https://isni.org/"):
+        return "ISNI", "https://isni.org"
 
     return "Other", None
 
