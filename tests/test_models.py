@@ -488,20 +488,17 @@ class MetadataTest(unittest.TestCase):
 
     # Rights tests
     def test_rights_stores_identifier_and_derived_fields(self):
-        """Checks that a Rights object stores identifier and derives fields."""
-        item_rights = Rights(rights_identifier="CC0")
+        """Checks that a Rights object stores identifier"""
+        item_rights = Rights(rights="Creative Commons Attribution 4.0 International", rights_identifier="CC0")
 
+        self.assertEqual(item_rights.rights, "Creative Commons Attribution 4.0 International")
         self.assertEqual(item_rights.rights_identifier, "CC0")
-        self.assertIsInstance(item_rights.rights, str)
-        self.assertIsInstance(item_rights.rights_uri, str)
-        self.assertIsInstance(item_rights.scheme_uri, str)
-        self.assertIsInstance(item_rights.rights_identifier_scheme, str)
-        self.assertIsInstance(item_rights.lang, str)
+
 
     def test_rights_rejects_invalid_identifier(self):
         """Checks that Rights rejects identifiers not in the controlled list."""
         with self.assertRaises(ValueError):
-            Rights(rights_identifier="INVALID")
+            Rights(rights="Creative Commons Attribution 4.0 International", rights_identifier="INVALID")
 
 
     # Alternate identifier tests
@@ -844,11 +841,6 @@ class MetadataTest(unittest.TestCase):
             with self.subTest(date_value=date_value):
                 with self.assertRaises(ValueError):
                     Date(date=date_value, date_type="Issued")
-
-    def test_date_requires_date_type_when_date_supplied(self):
-        """Checks that date type is required when date is supplied."""
-        with self.assertRaises(ValueError):
-            Date(date="2026")
 
     def test_date_type_must_be_string(self):
         """Checks that date type must be a string."""

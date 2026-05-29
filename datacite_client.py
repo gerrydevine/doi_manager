@@ -54,7 +54,7 @@ def post_datacite_payload(
     return json.loads(body)
 
 
-def allocate_doi(
+def create_draft_datacite(
     record: Record,
     doi_prefix: str,
     datacite_url: str | None = None,
@@ -67,10 +67,7 @@ def allocate_doi(
     if record.metadata is None:
         raise ValueError("record must have metadata before allocating a DOI")
 
-    if (
-        record.metadata.identifier is not None
-        and record.metadata.identifier.identifier_value
-    ):
+    if record.metadata.identifier is not None and record.metadata.identifier.identifier_value:
         raise ValueError("This record already has an identifier allocated")
 
     if not datacite_url:

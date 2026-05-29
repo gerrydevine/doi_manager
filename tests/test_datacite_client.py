@@ -2,7 +2,7 @@ import json
 import unittest
 from unittest.mock import patch
 
-from datacite_client import allocate_doi, datacite_login
+from datacite_client import create_draft_datacite, datacite_login
 from models import Creator, Identifier, Metadata, Publisher, Record, Title, Types
 
 
@@ -58,7 +58,7 @@ class DataCiteClientTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             datacite_login("repo.test", "secret")
 
-    def test_allocate_doi_posts_payload_and_updates_metadata_identifier(self):
+    def test_create_draft_datacite_posts_payload_and_updates_metadata_identifier(self):
         captured = {}
         record = Record(metadata=self.metadata())
         record_identifier = record.identifier
@@ -67,7 +67,7 @@ class DataCiteClientTest(unittest.TestCase):
             captured["request"] = request
             return FakeResponse({"data": {"id": "10.80402/example-doi"}})
 
-        identifier = allocate_doi(
+        identifier = create_draft_datacite(
             record,
             "10.80402",
             datacite_url="https://api.test.datacite.org/dois",
@@ -88,38 +88,38 @@ class DataCiteClientTest(unittest.TestCase):
         self.assertEqual(record.metadata.identifier, identifier)
         self.assertEqual(record.identifier, record_identifier)
 
-    def test_allocate_doi_requires_record(self):
+    def test_create_draft_datacite_requires_record(self):
         with self.assertRaises(TypeError):
-            allocate_doi(
+            create_draft_datacite(
                 "not a record",
                 "10.80402",
                 datacite_url="https://api.test.datacite.org/dois",
                 auth_token="Basic test-token",
             )
 
-    def test_allocate_doi_requires_metadata(self):
+    def test_create_draft_datacite_requires_metadata(self):
         with self.assertRaises(ValueError):
-            allocate_doi(
+            create_draft_datacite(
                 Record(),
                 "10.80402",
                 datacite_url="https://api.test.datacite.org/dois",
                 auth_token="Basic test-token",
             )
 
-    def test_allocate_doi_rejects_existing_metadata_identifier(self):
+    def test_create_draft_datacite_rejects_existing_metadata_identifier(self):
         record = Record(metadata=self.metadata(identifier_value="10.123/existing"))
 
         with self.assertRaises(ValueError):
-            allocate_doi(
+            create_draft_datacite(
                 record,
                 "10.80402",
                 datacite_url="https://api.test.datacite.org/dois",
                 auth_token="Basic test-token",
             )
 
-    def test_allocate_doi_requires_datacite_url(self):
+    def test_create_draft_datacite_requires_datacite_url(self):
         with self.assertRaises(AttributeError):
-            allocate_doi(
+            create_draft_datacite(
                 Record(metadata=self.metadata()),
                 "10.80402",
                 auth_token="Basic test-token",

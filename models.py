@@ -1,8 +1,5 @@
-
 import uuid
-
 from datetime import datetime
-from utils import get_cc_license_rights
 from vocabs import (
     AFFILIATION_IDENTIFIER_PREFIXES,
     CONTRIBUTOR_NAME_TYPE_VALUES,
@@ -18,7 +15,7 @@ from vocabs import (
     RELATION_TYPE_VALUES,
     RESOURCE_TYPE_GENERAL_VALUES,
     TITLE_TYPE_VALUES,
-    RIGHTS_IDENTIFIER_VALUES,
+    RIGHTS_IDENTIFIER_VALUES
 )
 
 
@@ -166,7 +163,7 @@ class Date:
         self,
         *,
         date: str,
-        date_type: str | None = None,
+        date_type: str,
         date_information: str | None = None,
     ):
         if not isinstance(date, str):
@@ -371,20 +368,23 @@ class Rights:
     def __init__(
         self,
         *,
-        rights_identifier: str
+        rights: str,
+        rights_uri: str | None = None,
+        rights_identifier: str | None = None,
+        rights_identifier_scheme: str | None = None,
+        scheme_uri: str | None = None,
+        lang: str | None = None,
     ):
         if rights_identifier not in RIGHTS_IDENTIFIER_VALUES:
             values = ", ".join(RIGHTS_IDENTIFIER_VALUES)
             raise ValueError(f"rights_identifier must be one of: {values}")
 
+        self.rights = rights
+        self.rights_uri = rights_uri
         self.rights_identifier = rights_identifier
-
-        cc_license_info = get_cc_license_rights(rights_identifier)
-        self.rights = cc_license_info["rights"]
-        self.rights_uri = cc_license_info["rights_uri"]
-        self.scheme_uri = cc_license_info["scheme_uri"]
-        self.rights_identifier_scheme = cc_license_info["rights_identifier_scheme"]
-        self.lang = cc_license_info["lang"]
+        self.rights_identifier_scheme = rights_identifier_scheme
+        self.scheme_uri = scheme_uri
+        self.lang = lang
 
 
 class FundingReference:

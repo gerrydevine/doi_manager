@@ -1,7 +1,6 @@
 import random
 from config import DATACITE_URL, DOI_PREFIX
-from datacite_client import allocate_doi
-from landing_page_utils import generate_landing_page
+from datacite_client import create_draft_datacite
 from models import (
     Affiliation,
     AlternateIdentifier,
@@ -189,8 +188,14 @@ item_publisher = Publisher(
 )
 
 # Create optional rights for the resource.
-item_rights_1 = Rights(rights_identifier="CC0")
-item_rights_2 = Rights(rights_identifier="CC BY 4.0")
+item_rights_1 = Rights(
+    rights="Creative Commons Attribution 4.0 International",
+    rights_uri="https://creativecommons.org/licenses/by/4.0/",
+    scheme_uri="https://spdx.org/licenses/",
+    rights_identifier="CC BY 4.0",
+    rights_identifier_scheme="SPDX",
+    lang="en"
+)
 
 # Create optional funding references for the resource.
 item_funding_reference_1 = FundingReference(
@@ -216,7 +221,7 @@ metadata = Metadata(
     creators=[creator_1, creator_2],
     titles=[item_title_1, item_title_2],
     publisher=item_publisher,
-    # publication_year="2026",
+    publication_year="2026",
     types=item_types,
     language="en",
     subjects=[item_subject_1, item_subject_2],
@@ -238,23 +243,22 @@ metadata = Metadata(
     descriptions=[item_description_1, item_description_2],
     geolocations=[item_geolocation_1, item_geolocation_2, item_geolocation_3, item_geolocation_4],
     funding_references=[item_funding_reference_1],
-    rights_list=[item_rights_1, item_rights_2]
+    rights_list=[item_rights_1]
 )
 
 
 # Attach the record metadata to the record
 record.metadata = metadata
 
-# Allocate a DOI through DataCite and store it on the record metadata.
-allocated_identifier = allocate_doi(record, DOI_PREFIX, DATACITE_URL)
+# Allocate a DOI through DataCite and store the returned DOI on the record metadata.
+allocated_doi = create_draft_datacite(record, DOI_PREFIX, DATACITE_URL)
 
 
 # Inspect the record identifier and assigned metadata.
 print(f"Record identifier: {record.identifier}")
 print(f"Record metadata identifier before DOI allocation: {record.metadata.identifier}")
 
-
-print(f"Allocated DOI: {allocated_identifier.identifier_value}")
+print(f"Allocated DOI: {allocated_doi.identifier_value}")
 print(f"Record metadata identifier after DOI allocation: {record.metadata.identifier.identifier_value}")
 
 # Inspect the resource identifier.
@@ -409,10 +413,3 @@ print(f"Funding reference 1 award URI: {metadata.funding_references[0].award_uri
 # Inspect the rights.
 print(f"Rights 1 identifier: {metadata.rights_list[0].rights_identifier}")
 print(f"Rights 1 URI: {metadata.rights_list[0].rights_uri}")
-print(f"Rights 2 identifier: {metadata.rights_list[1].rights_identifier}")
-print(f"Rights 2 URI: {metadata.rights_list[1].rights_uri}")
-
-
-# Generate a landing page for the record.
-generate_landing_page(record)
-print(f"Landing Page: {record.identifier}.html")

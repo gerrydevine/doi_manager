@@ -128,7 +128,16 @@ class DataCitePayloadTest(unittest.TestCase):
                     award_uri="https://example.com/awards/AWD-123",
                 )
             ],
-            rights_list=[Rights(rights_identifier="CC0")],
+            rights_list=[
+                Rights(
+                    rights="Creative Commons Attribution 4.0 International",
+                    rights_uri="https://creativecommons.org/licenses/by/4.0/",
+                    scheme_uri="https://spdx.org/licenses/",
+                    rights_identifier="CC BY 4.0",
+                    rights_identifier_scheme="SPDX",
+                    lang="en"
+                )
+            ],
             **metadata_kwargs,
         )
 
@@ -169,7 +178,7 @@ class DataCitePayloadTest(unittest.TestCase):
             attrs["fundingReferences"][0]["funderName"],
             "Example Research Council",
         )
-        self.assertEqual(attrs["rightsList"][0]["rightsIdentifier"], "CC0")
+        self.assertEqual(attrs["rightsList"][0]["rightsIdentifier"], "CC BY 4.0")
 
     def test_generate_datacite_payload_omits_missing_doi(self):
         record = Record(metadata=self.metadata())
