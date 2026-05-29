@@ -6,8 +6,8 @@ from urllib.request import Request, urlopen
 
 from dotenv import load_dotenv
 
-from datacite_payload import generate_datacite_payload
-from models import Identifier, Record
+from .datacite_payload import generate_datacite_payload
+from .models import Identifier, Record
 
 
 class DataCiteHTTPError(RuntimeError):
@@ -54,7 +54,7 @@ def post_datacite_payload(
     return json.loads(body)
 
 
-def create_draft_datacite(
+def create_draft_and_assign_doi(
     record: Record,
     doi_prefix: str,
     datacite_url: str | None = None,

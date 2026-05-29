@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from vocabs import (
+from .vocabs import (
     AFFILIATION_IDENTIFIER_PREFIXES,
     CONTRIBUTOR_NAME_TYPE_VALUES,
     CONTRIBUTOR_TYPE_VALUES,
@@ -15,7 +15,7 @@ from vocabs import (
     RELATION_TYPE_VALUES,
     RESOURCE_TYPE_GENERAL_VALUES,
     TITLE_TYPE_VALUES,
-    RIGHTS_IDENTIFIER_VALUES
+    RIGHTS_IDENTIFIER_VALUES,
 )
 
 

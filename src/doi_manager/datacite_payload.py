@@ -1,4 +1,4 @@
-from models import Record
+from .models import Record
 
 
 def generate_datacite_payload(record: Record, doi_prefix: str) -> dict:

@@ -3,7 +3,7 @@ import unittest
 from datetime import datetime
 from unittest.mock import patch
 
-from models import (
+from doi_manager.models import (
     Affiliation,
     AlternateIdentifier,
     Contributor,
@@ -223,7 +223,7 @@ class MetadataTest(unittest.TestCase):
 
     def test_creator_uses_creator_name_type_vocab(self):
         """Checks that creators use the creator-specific name type vocabulary."""
-        with patch("models.CREATOR_NAME_TYPE_VALUES", ["CreatorOnly"]):
+        with patch("doi_manager.models.CREATOR_NAME_TYPE_VALUES", ["CreatorOnly"]):
             item_creator = Creator(
                 creator_name="Ada Lovelace",
                 name_type="CreatorOnly",
@@ -360,7 +360,7 @@ class MetadataTest(unittest.TestCase):
 
     def test_contributor_uses_contributor_name_type_vocab(self):
         """Checks that contributors use their own name type vocabulary."""
-        with patch("models.CONTRIBUTOR_NAME_TYPE_VALUES", ["ContributorOnly"]):
+        with patch("doi_manager.models.CONTRIBUTOR_NAME_TYPE_VALUES", ["ContributorOnly"]):
             item_contributor = Contributor(
                 contributor_name="Grace Hopper",
                 name_type="ContributorOnly",
@@ -1853,7 +1853,7 @@ class MetadataTest(unittest.TestCase):
         item_title = Title(title="Example resource")
         item_publisher = Publisher(name="Example Publisher")
 
-        with patch("models.datetime") as mock_datetime:
+        with patch("doi_manager.models.datetime") as mock_datetime:
             mock_datetime.now.return_value.year = datetime.now().year
 
             item_metadata = Metadata(

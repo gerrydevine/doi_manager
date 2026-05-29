@@ -1,7 +1,7 @@
 import unittest
 
-from datacite_payload import generate_datacite_payload
-from models import (
+from doi_manager.datacite_payload import generate_datacite_payload
+from doi_manager.models import (
     Affiliation,
     AlternateIdentifier,
     Contributor,

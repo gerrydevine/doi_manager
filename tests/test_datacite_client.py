@@ -2,8 +2,8 @@ import json
 import unittest
 from unittest.mock import patch
 
-from datacite_client import create_draft_datacite, datacite_login
-from models import Creator, Identifier, Metadata, Publisher, Record, Title, Types
+from doi_manager.datacite_client import create_draft_and_assign_doi, datacite_login
+from doi_manager.models import Creator, Identifier, Metadata, Publisher, Record, Title, Types
 
 
 class FakeResponse:
@@ -42,7 +42,7 @@ class DataCiteClientTest(unittest.TestCase):
         )
 
     def test_datacite_login_returns_basic_auth_token(self):
-        with patch("datacite_client.load_dotenv") as mock_load_dotenv, patch.dict(
+        with patch("doi_manager.datacite_client.load_dotenv") as mock_load_dotenv, patch.dict(
             "os.environ",
             {
                 "DATACITE_USERNAME": "repo.test",
@@ -67,7 +67,7 @@ class DataCiteClientTest(unittest.TestCase):
             captured["request"] = request
             return FakeResponse({"data": {"id": "10.80402/example-doi"}})
 
-        identifier = create_draft_datacite(
+        identifier = create_draft_and_assign_doi(
             record,
             "10.80402",
             datacite_url="https://api.test.datacite.org/dois",
@@ -90,7 +90,7 @@ class DataCiteClientTest(unittest.TestCase):
 
     def test_create_draft_datacite_requires_record(self):
         with self.assertRaises(TypeError):
-            create_draft_datacite(
+            create_draft_and_assign_doi(
                 "not a record",
                 "10.80402",
                 datacite_url="https://api.test.datacite.org/dois",
@@ -99,7 +99,7 @@ class DataCiteClientTest(unittest.TestCase):
 
     def test_create_draft_datacite_requires_metadata(self):
         with self.assertRaises(ValueError):
-            create_draft_datacite(
+            create_draft_and_assign_doi(
                 Record(),
                 "10.80402",
                 datacite_url="https://api.test.datacite.org/dois",
@@ -110,7 +110,7 @@ class DataCiteClientTest(unittest.TestCase):
         record = Record(metadata=self.metadata(identifier_value="10.123/existing"))
 
         with self.assertRaises(ValueError):
-            create_draft_datacite(
+            create_draft_and_assign_doi(
                 record,
                 "10.80402",
                 datacite_url="https://api.test.datacite.org/dois",
@@ -119,7 +119,7 @@ class DataCiteClientTest(unittest.TestCase):
 
     def test_create_draft_datacite_requires_datacite_url(self):
         with self.assertRaises(AttributeError):
-            create_draft_datacite(
+            create_draft_and_assign_doi(
                 Record(metadata=self.metadata()),
                 "10.80402",
                 auth_token="Basic test-token",
