@@ -1,8 +1,13 @@
 import json
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
-from doi_manager.datacite_client import create_draft_and_assign_doi, datacite_login
+from doi_manager.datacite_client import (
+    create_draft_and_assign_doi,
+    datacite_login,
+    load_datacite_config,
+)
 from doi_manager.models import Creator, Identifier, Metadata, Publisher, Record, Title, Types
 
 
@@ -67,13 +72,20 @@ class DataCiteClientTest(unittest.TestCase):
             captured["request"] = request
             return FakeResponse({"data": {"id": "10.80402/example-doi"}})
 
-        identifier = create_draft_and_assign_doi(
-            record,
-            "10.80402",
-            datacite_url="https://api.test.datacite.org/dois",
-            auth_token="Basic test-token",
-            urlopen_func=fake_urlopen,
-        )
+        with patch.dict(
+            "sys.modules",
+            {
+                "config": SimpleNamespace(
+                    DOI_PREFIX="10.80402",
+                    DATACITE_URL="https://api.test.datacite.org/dois",
+                )
+            },
+        ):
+            identifier = create_draft_and_assign_doi(
+                record,
+                auth_token="Basic test-token",
+                urlopen_func=fake_urlopen,
+            )
 
         posted_payload = json.loads(captured["request"].data.decode("utf-8"))
 
@@ -92,8 +104,6 @@ class DataCiteClientTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             create_draft_and_assign_doi(
                 "not a record",
-                "10.80402",
-                datacite_url="https://api.test.datacite.org/dois",
                 auth_token="Basic test-token",
             )
 
@@ -101,8 +111,6 @@ class DataCiteClientTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             create_draft_and_assign_doi(
                 Record(),
-                "10.80402",
-                datacite_url="https://api.test.datacite.org/dois",
                 auth_token="Basic test-token",
             )
 
@@ -112,13 +120,62 @@ class DataCiteClientTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             create_draft_and_assign_doi(
                 record,
-                "10.80402",
-                datacite_url="https://api.test.datacite.org/dois",
                 auth_token="Basic test-token",
             )
 
-    def test_create_draft_datacite_requires_datacite_url(self):
-        with self.assertRaises(AttributeError):
+    def test_load_datacite_config_reads_user_config_module(self):
+        with patch.dict(
+            "sys.modules",
+            {
+                "config": SimpleNamespace(
+                    DOI_PREFIX="10.80402",
+                    DATACITE_URL="https://api.test.datacite.org/dois",
+                )
+            },
+        ):
+            doi_prefix, datacite_url = load_datacite_config()
+
+        self.assertEqual(doi_prefix, "10.80402")
+        self.assertEqual(datacite_url, "https://api.test.datacite.org/dois")
+
+    def test_create_draft_datacite_requires_user_config_file(self):
+        with patch.dict("sys.modules"):
+            with patch("doi_manager.datacite_client.import_module") as mock_import_module:
+                mock_import_module.side_effect = ModuleNotFoundError(
+                    "No module named 'config'",
+                    name="config",
+                )
+
+                with self.assertRaises(AttributeError):
+                    create_draft_and_assign_doi(
+                        Record(metadata=self.metadata()),
+                        auth_token="Basic test-token",
+                    )
+
+    def test_create_draft_datacite_requires_doi_prefix_config(self):
+        with patch.dict(
+            "sys.modules",
+            {"config": SimpleNamespace(DOI_PREFIX="", DATACITE_URL="https://api.test.datacite.org/dois")},
+        ):
+            with self.assertRaises(AttributeError):
+                create_draft_and_assign_doi(
+                    Record(metadata=self.metadata()),
+                    auth_token="Basic test-token",
+                )
+
+    def test_create_draft_datacite_requires_datacite_url_config(self):
+        with patch.dict(
+            "sys.modules",
+            {"config": SimpleNamespace(DOI_PREFIX="10.80402", DATACITE_URL="")},
+        ):
+            with self.assertRaises(AttributeError):
+                create_draft_and_assign_doi(
+                    Record(metadata=self.metadata()),
+                    auth_token="Basic test-token",
+                )
+
+    def test_create_draft_datacite_does_not_accept_doi_prefix_argument(self):
+        with self.assertRaises(TypeError):
             create_draft_and_assign_doi(
                 Record(metadata=self.metadata()),
                 "10.80402",

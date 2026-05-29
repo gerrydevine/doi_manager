@@ -21,6 +21,7 @@ htmlcov/
 # Local environment files
 .env
 .env.*
+config.py
 
 # Local tool state
 .codex
@@ -34,3 +35,4 @@ htmlcov/
 # GD additions
 datacite_cleanup/
 todos.txt
+notes.txt

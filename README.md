@@ -32,24 +32,75 @@ python -m pip install -e .
 python -m unittest discover -s tests
 ```
 
+### DataCite credentials
+
+`doi_manager` expects DataCite credentials to be stored in a `.env` file in the
+directory where your script is run:
+
+```dotenv
+DATACITE_USERNAME=your.datacite.username
+DATACITE_PASSWORD=your.datacite.password
+```
+
+Exercise caution in exposing this file.
+
+### DataCite config
+
+`doi_manager` expects the DataCite API URL and DOI prefix to be defined in a
+`config.py` file in your own project, alongside the script that uses the
+library:
+
+```python
+DATACITE_URL = "https://api.test.datacite.org/dois"
+DOI_PREFIX = "10.80402"
+```
+
+For example:
+
+```text
+my_project/
++-- config.py
++-- create_doi.py
+```
+
+
 ### Use
 
 ```python
 from doi_manager import (
-    Affiliation,
     Creator,
     Metadata,
-    Record,
     Publisher,
+    Record,
     Title,
     Types,
     create_draft_and_assign_doi,
 )
 
-record = Record(metadata=metadata)
-identifier = create_draft_and_assign_doi(
-    record,
-    doi_prefix="10.80402",
-    datacite_url="https://api.test.datacite.org/dois",
+metadata = Metadata(
+    creators=[
+        Creator(
+            creator_name="Ada Lovelace",
+            name_type="Personal",
+        )
+    ],
+    titles=[
+        Title(title="Example research dataset"),
+    ],
+    publisher=Publisher(name="Example University"),
+    publication_year="2026",
+    types=Types(
+        resource_type="Dataset",
+        resource_type_general="Dataset",
+    ),
 )
+
+record = Record(metadata=metadata)
+
+identifier = create_draft_and_assign_doi(record)
+
+print(identifier.identifier_value)
 ```
+
+`create_draft_and_assign_doi` creates a draft DOI in DataCite, stores the
+returned DOI on `record.metadata.identifier`, and returns the new identifier.

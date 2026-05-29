@@ -1,8 +1,8 @@
-from .config import DATACITE_URL, DOI_PREFIX
 from .datacite_client import (
     DataCiteHTTPError,
     create_draft_and_assign_doi,
     datacite_login,
+    load_datacite_config,
     post_datacite_payload,
 )
 from .models import (
@@ -29,11 +29,10 @@ from .models import (
 )
 
 __all__ = [
-    "DATACITE_URL",
-    "DOI_PREFIX",
     "DataCiteHTTPError",
     "create_draft_and_assign_doi",
     "datacite_login",
+    "load_datacite_config",
     "post_datacite_payload",
     "Affiliation",
     "AlternateIdentifier",

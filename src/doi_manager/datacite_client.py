@@ -1,6 +1,7 @@
 import json
 import os
 from base64 import b64encode
+from importlib import import_module
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
@@ -12,6 +13,29 @@ from .models import Identifier, Record
 
 class DataCiteHTTPError(RuntimeError):
     pass
+
+
+def load_datacite_config() -> tuple[str, str]:
+    try:
+        user_config = import_module("config")
+    except ModuleNotFoundError as err:
+        if err.name == "config":
+            raise AttributeError(
+                "You need to provide a config.py file containing "
+                "DOI_PREFIX and DATACITE_URL"
+            ) from err
+        raise
+
+    doi_prefix = getattr(user_config, "DOI_PREFIX", None)
+    datacite_url = getattr(user_config, "DATACITE_URL", None)
+
+    if not doi_prefix:
+        raise AttributeError("You need to provide a valid DOI_PREFIX in config.py")
+
+    if not datacite_url:
+        raise AttributeError("You need to provide a valid DATACITE_URL in config.py")
+
+    return doi_prefix, datacite_url
 
 
 def datacite_login() -> str:
@@ -56,8 +80,7 @@ def post_datacite_payload(
 
 def create_draft_and_assign_doi(
     record: Record,
-    doi_prefix: str,
-    datacite_url: str | None = None,
+    *,
     auth_token: str | None = None,
     urlopen_func=urlopen,
 ) -> Identifier:
@@ -70,9 +93,7 @@ def create_draft_and_assign_doi(
     if record.metadata.identifier is not None and record.metadata.identifier.identifier_value:
         raise ValueError("This record already has an identifier allocated")
 
-    if not datacite_url:
-        raise AttributeError("You need to provide a valid datacite url")
-
+    doi_prefix, datacite_url = load_datacite_config()
     token = auth_token or datacite_login()
     payload = generate_datacite_payload(record, doi_prefix)
     response_data = post_datacite_payload(

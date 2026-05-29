@@ -1,7 +1,5 @@
 import random
 from doi_manager import (
-    DATACITE_URL,
-    DOI_PREFIX,
     Affiliation,
     AlternateIdentifier,
     Contributor,
@@ -252,7 +250,7 @@ metadata = Metadata(
 record.metadata = metadata
 
 # Allocate a DOI through DataCite and store the returned DOI on the record metadata.
-allocated_doi = create_draft_and_assign_doi(record, DOI_PREFIX, DATACITE_URL)
+allocated_doi = create_draft_and_assign_doi(record)
 
 
 # Inspect the record identifier and assigned metadata.
