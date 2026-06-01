@@ -59,7 +59,9 @@ class DataCitePayloadTest(unittest.TestCase):
             titles=[Title(title="Example resource", type="Subtitle")],
             publisher=Publisher(
                 name="Example Publisher",
-                identifier="https://ror.org/03yrm5c26",
+                publisher_identifier="https://ror.org/03yrm5c26",
+                publisher_identifier_scheme="ROR",
+                scheme_uri="https://ror.org/",
             ),
             publication_year="2026",
             types=Types(
@@ -168,6 +170,12 @@ class DataCitePayloadTest(unittest.TestCase):
         self.assertEqual(attrs["creators"][0]["name"], "Ada Lovelace")
         self.assertEqual(attrs["titles"][0]["title"], "Example resource")
         self.assertEqual(attrs["publisher"]["name"], "Example Publisher")
+        self.assertEqual(
+            attrs["publisher"]["publisherIdentifier"],
+            "https://ror.org/03yrm5c26",
+        )
+        self.assertEqual(attrs["publisher"]["publisherIdentifierScheme"], "ROR")
+        self.assertEqual(attrs["publisher"]["schemeUri"], "https://ror.org/")
         self.assertEqual(attrs["publicationYear"], 2026)
         self.assertEqual(attrs["types"]["resourceTypeGeneral"], "Dataset")
         self.assertEqual(

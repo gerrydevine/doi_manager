@@ -201,7 +201,9 @@ item_geolocation_4 = GeoLocation(
 # Create the single publisher required by the resource.
 item_publisher = Publisher(
     name="UNSW Sydney",
-    identifier="https://ror.org/03r8z3t63",
+    publisher_identifier="https://ror.org/03r8z3t63",
+    publisher_identifier_scheme="ROR",
+    scheme_uri="https://ror.org/",
     lang="en",
 )
 
@@ -400,9 +402,11 @@ print(
 )
 
 
-# Inspect the publisher and its hard-coded scheme fields.
+# Inspect the publisher and its explicit identifier fields.
 print(f"Publisher name: {metadata.publisher.name}")
-print(f"Publisher identifier scheme: {metadata.publisher.identifier_scheme}")
+print(
+    f"Publisher identifier scheme: {metadata.publisher.publisher_identifier_scheme}"
+)
 print(f"Publisher scheme URI: {metadata.publisher.scheme_uri}")
 print(f"Publisher language: {metadata.publisher.lang}")
 

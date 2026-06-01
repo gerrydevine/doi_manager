@@ -183,10 +183,39 @@ AFFILIATION_SCHEME_URI_VALUES = [
 ]
 
 # Allowed URL prefixes for publisher identifiers.
-PUBLISHER_IDENTIFIER_PREFIXES = ["https://ror.org/"]
+PUBLISHER_IDENTIFIER_PREFIXES = [
+    "https://ror.org/",
+    "https://doi.org/",
+    "https://viaf.org/",
+    "https://wikidata.org/"
+]
+
+PUBLISHER_IDENTIFIER_SCHEME_VALUES = [
+    "ROR",
+    "re3data",
+    "VIAF",
+    "Wikidata",
+    "Crossref Funder ID",
+    "ISNI",
+    "OpenDOAR",
+    "FAIRsharing",
+    "ISSN"
+]
+
+PUBLISHER_IDENTIFIER_SCHEME_URI_VALUES = [
+    "https://ror.org/",
+    "https://re3data.org/",
+    "https://viaf.org/",
+    "https://www.wikidata.org/wiki/",
+]
 
 # Allowed values for title type.
-TITLE_TYPE_VALUES = ["AlternativeTitle", "Subtitle", "TranslatedTitle", "Other"]
+TITLE_TYPE_VALUES = [
+    "AlternativeTitle", 
+    "Subtitle", 
+    "TranslatedTitle", 
+    "Other"
+]
 
 # Allowed values for the description type.
 DESCRIPTION_TYPE_VALUES = [

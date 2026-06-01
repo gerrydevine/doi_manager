@@ -15,6 +15,8 @@ from .vocabs import (
     NAME_IDENTIFIER_PREFIXES,
     NAME_IDENTIFIER_SCHEME_URI_VALUES,
     PUBLISHER_IDENTIFIER_PREFIXES,
+    PUBLISHER_IDENTIFIER_SCHEME_VALUES,
+    PUBLISHER_IDENTIFIER_SCHEME_URI_VALUES,
     RELATED_IDENTIFIER_TYPE_VALUES,
     RELATION_TYPE_VALUES,
     RESOURCE_TYPE_GENERAL_VALUES,
@@ -640,28 +642,57 @@ class Publisher:
         self,
         *,
         name: str,
-        identifier: str | None = None,
-        lang: str = "en",
+        publisher_identifier: str | None = None,
+        publisher_identifier_scheme: str | None = None,
+        scheme_uri: str | None = None,
+        lang: str | None = None,
     ):
         if not isinstance(name, str):
             raise TypeError("name must be a string")
 
-        if identifier is not None:
-            if not isinstance(identifier, str):
-                raise TypeError("identifier must be a string")
+        if publisher_identifier is not None:
+            if not isinstance(publisher_identifier, str):
+                raise TypeError("publisher_identifier must be a string")
 
-            if not identifier.startswith(tuple(PUBLISHER_IDENTIFIER_PREFIXES)):
+            if not publisher_identifier.startswith(
+                tuple(PUBLISHER_IDENTIFIER_PREFIXES)
+            ):
                 values = ", ".join(PUBLISHER_IDENTIFIER_PREFIXES)
-                raise ValueError(f"identifier must begin with one of: {values}")
+                raise ValueError(
+                    f"publisher_identifier must begin with one of: {values}"
+                )
 
-        if not isinstance(lang, str):
+            if publisher_identifier_scheme is None:
+                raise ValueError(
+                    "publisher_identifier_scheme is required when "
+                    "publisher_identifier is supplied"
+                )
+
+        if (
+            publisher_identifier_scheme is not None
+            and publisher_identifier_scheme not in PUBLISHER_IDENTIFIER_SCHEME_VALUES
+        ):
+            values = ", ".join(PUBLISHER_IDENTIFIER_SCHEME_VALUES)
+            raise ValueError(
+                f"publisher_identifier_scheme must be one of: {values}"
+            )
+
+        if scheme_uri is not None:
+            if not isinstance(scheme_uri, str):
+                raise TypeError("scheme_uri must be a string")
+
+            if scheme_uri not in PUBLISHER_IDENTIFIER_SCHEME_URI_VALUES:
+                values = ", ".join(PUBLISHER_IDENTIFIER_SCHEME_URI_VALUES)
+                raise ValueError(f"scheme_uri must be one of: {values}")
+
+        if lang is not None and not isinstance(lang, str):
             raise TypeError("lang must be a string")
 
         self.name = name
-        self.identifier = identifier
+        self.publisher_identifier = publisher_identifier
+        self.publisher_identifier_scheme = publisher_identifier_scheme
+        self.scheme_uri = scheme_uri
         self.lang = lang
-        self.identifier_scheme = "ROR" if identifier else None
-        self.scheme_uri = "https://ror.org/" if identifier else None
 
 
 class Metadata:

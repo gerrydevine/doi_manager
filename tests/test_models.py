@@ -1456,22 +1456,24 @@ class MetadataTest(unittest.TestCase):
         item_publisher = Publisher(name="Example Publisher")
 
         self.assertEqual(item_publisher.name, "Example Publisher")
-        self.assertIsNone(item_publisher.identifier)
-        self.assertEqual(item_publisher.lang, "en")
-        self.assertIsNone(item_publisher.identifier_scheme)
+        self.assertIsNone(item_publisher.publisher_identifier)
+        self.assertIsNone(item_publisher.lang)
+        self.assertIsNone(item_publisher.publisher_identifier_scheme)
         self.assertIsNone(item_publisher.scheme_uri)
 
     def test_publisher_stores_identifier_lang_and_scheme_fields(self):
-        """Checks that publisher identifier fills ROR scheme fields."""
+        """Checks that publisher identifier fields are stored."""
         item_publisher = Publisher(
             name="Example Publisher",
-            identifier="https://ror.org/03yrm5c26",
+            publisher_identifier="https://ror.org/03yrm5c26",
+            publisher_identifier_scheme="ROR",
+            scheme_uri="https://ror.org/",
             lang="fr",
         )
 
-        self.assertEqual(item_publisher.identifier, "https://ror.org/03yrm5c26")
+        self.assertEqual(item_publisher.publisher_identifier, "https://ror.org/03yrm5c26")
         self.assertEqual(item_publisher.lang, "fr")
-        self.assertEqual(item_publisher.identifier_scheme, "ROR")
+        self.assertEqual(item_publisher.publisher_identifier_scheme, "ROR")
         self.assertEqual(item_publisher.scheme_uri, "https://ror.org/")
 
     def test_publisher_requires_name(self):
@@ -1492,14 +1494,23 @@ class MetadataTest(unittest.TestCase):
     def test_publisher_identifier_must_be_string(self):
         """Checks that publisher identifier must be a string."""
         with self.assertRaises(TypeError):
-            Publisher(name="Example Publisher", identifier=123)
+            Publisher(name="Example Publisher", publisher_identifier=123)
 
     def test_publisher_rejects_invalid_identifier_prefix(self):
-        """Checks that publisher identifiers must use the ROR prefix."""
+        """Checks that publisher identifiers must use an allowed prefix."""
         with self.assertRaises(ValueError):
             Publisher(
                 name="Example Publisher",
-                identifier="https://example.com/03yrm5c26",
+                publisher_identifier="https://example.com/03yrm5c26",
+                publisher_identifier_scheme="ROR",
+            )
+
+    def test_publisher_requires_identifier_scheme_when_identifier_is_supplied(self):
+        """Checks that publisher identifiers require an explicit scheme."""
+        with self.assertRaises(ValueError):
+            Publisher(
+                name="Example Publisher",
+                publisher_identifier="https://ror.org/03yrm5c26",
             )
 
     def test_publisher_lang_must_be_string(self):

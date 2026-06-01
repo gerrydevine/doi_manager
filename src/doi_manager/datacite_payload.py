@@ -153,8 +153,8 @@ def _publisher_to_payload(publisher) -> dict:
     return _compact(
         {
             "name": publisher.name,
-            "publisherIdentifier": publisher.identifier,
-            "publisherIdentifierScheme": publisher.identifier_scheme,
+            "publisherIdentifier": publisher.publisher_identifier,
+            "publisherIdentifierScheme": publisher.publisher_identifier_scheme,
             "schemeUri": publisher.scheme_uri,
             "lang": publisher.lang,
         }
