@@ -15,6 +15,7 @@ from doi_manager.models import (
     GeoLocation,
     GeoLocationBox,
     GeoLocationPoint,
+    NameIdentifier,
     PolygonPoint,
     Rights,
     Publisher,
@@ -120,30 +121,27 @@ class MetadataTest(unittest.TestCase):
     def test_affiliation_stores_identifier_and_name(self):
         """Checks that an affiliation stores its identifier and name."""
         item_affiliation = Affiliation(
-            identifier="https://ror.org/03yrm5c26",
             name="Example University",
+            affiliation_identifier="https://ror.org/03yrm5c26",
+            affiliation_identifier_scheme="ROR",
+            scheme_uri="https://ror.org/",
         )
 
-        self.assertEqual(item_affiliation.identifier, "https://ror.org/03yrm5c26")
+        self.assertEqual(
+            item_affiliation.affiliation_identifier,
+            "https://ror.org/03yrm5c26",
+        )
         self.assertEqual(item_affiliation.name, "Example University")
+        self.assertEqual(item_affiliation.affiliation_identifier_scheme, "ROR")
+        self.assertEqual(item_affiliation.scheme_uri, "https://ror.org/")
 
-    def test_affiliation_sets_identifier_scheme_when_identifier_exists(self):
-        """Checks that affiliation identifier scheme is ROR when identifier exists."""
-        item_affiliation = Affiliation(
-            identifier="https://ror.org/03yrm5c26",
-            name="Example University",
-        )
+    def test_affiliation_identifier_fields_are_optional(self):
+        """Checks that an affiliation can be created with just a name."""
+        item_affiliation = Affiliation(name="Example University")
 
-        self.assertEqual(item_affiliation.affiliationIdentifierScheme, "ROR")
-        self.assertEqual(item_affiliation.scheme_uri, "https://ror.org")
-
-    def test_affiliation_fields_are_optional(self):
-        """Checks that affiliation identifier and name can be omitted."""
-        item_affiliation = Affiliation()
-
-        self.assertIsNone(item_affiliation.identifier)
-        self.assertIsNone(item_affiliation.name)
-        self.assertIsNone(item_affiliation.affiliationIdentifierScheme)
+        self.assertEqual(item_affiliation.name, "Example University")
+        self.assertIsNone(item_affiliation.affiliation_identifier)
+        self.assertIsNone(item_affiliation.affiliation_identifier_scheme)
         self.assertIsNone(item_affiliation.scheme_uri)
 
     def test_affiliation_fields_must_be_keywords(self):
@@ -152,24 +150,140 @@ class MetadataTest(unittest.TestCase):
             Affiliation("https://ror.org/03yrm5c26", "Example University")
 
     def test_affiliation_rejects_invalid_identifier_prefix(self):
-        """Checks that affiliation identifiers must use the ROR prefix."""
+        """Checks that affiliation identifiers must use an allowed prefix."""
         with self.assertRaises(ValueError):
             Affiliation(
-                identifier="https://example.com/03yrm5c26",
                 name="Example University",
+                affiliation_identifier="https://example.com/03yrm5c26",
+                affiliation_identifier_scheme="ROR",
             )
 
     def test_affiliation_identifier_must_be_string(self):
         """Checks that affiliation identifiers must be strings."""
         with self.assertRaises(TypeError):
-            Affiliation(identifier=123, name="Example University")
+            Affiliation(
+                name="Example University",
+                affiliation_identifier=123,
+                affiliation_identifier_scheme="ROR",
+            )
+
+    def test_affiliation_requires_scheme_when_identifier_is_supplied(self):
+        """Checks that affiliation identifiers require an identifier scheme."""
+        with self.assertRaises(ValueError):
+            Affiliation(
+                name="Example University",
+                affiliation_identifier="https://ror.org/03yrm5c26",
+            )
+
+    def test_affiliation_identifier_scheme_must_be_string(self):
+        """Checks that affiliation identifier schemes must be strings."""
+        with self.assertRaises(TypeError):
+            Affiliation(
+                name="Example University",
+                affiliation_identifier="https://ror.org/03yrm5c26",
+                affiliation_identifier_scheme=123,
+            )
+
+    def test_affiliation_rejects_invalid_identifier_scheme(self):
+        """Checks that affiliation identifier schemes use the controlled list."""
+        with self.assertRaises(ValueError):
+            Affiliation(
+                name="Example University",
+                affiliation_identifier="https://ror.org/03yrm5c26",
+                affiliation_identifier_scheme="GRID",
+            )
+
+    def test_affiliation_scheme_uri_must_be_string(self):
+        """Checks that affiliation scheme URIs must be strings."""
+        with self.assertRaises(TypeError):
+            Affiliation(
+                name="Example University",
+                affiliation_identifier="https://ror.org/03yrm5c26",
+                affiliation_identifier_scheme="ROR",
+                scheme_uri=123,
+            )
+
+    def test_affiliation_rejects_invalid_scheme_uri(self):
+        """Checks that affiliation scheme URIs use the controlled list."""
+        with self.assertRaises(ValueError):
+            Affiliation(
+                name="Example University",
+                affiliation_identifier="https://ror.org/03yrm5c26",
+                affiliation_identifier_scheme="ROR",
+                scheme_uri="https://example.com/",
+            )
 
     def test_affiliation_name_must_be_string(self):
         """Checks that affiliation names must be strings."""
         with self.assertRaises(TypeError):
-            Affiliation(identifier="https://ror.org/03yrm5c26", name=123)
+            Affiliation(name=123)
 
     # Creator tests
+    def test_name_identifier_stores_fields(self):
+        """Checks that a name identifier stores its DataCite fields."""
+        item_name_identifier = NameIdentifier(
+            name_identifier="https://orcid.org/0000-0001-2345-6789",
+            name_identifier_scheme="ORCID",
+            scheme_uri="https://orcid.org",
+        )
+
+        self.assertEqual(
+            item_name_identifier.name_identifier,
+            "https://orcid.org/0000-0001-2345-6789",
+        )
+        self.assertEqual(item_name_identifier.name_identifier_scheme, "ORCID")
+        self.assertEqual(item_name_identifier.scheme_uri, "https://orcid.org")
+
+    def test_name_identifier_value_must_be_string(self):
+        """Checks that name identifier values must be strings."""
+        with self.assertRaises(TypeError):
+            NameIdentifier(
+                name_identifier=123,
+                name_identifier_scheme="ORCID",
+            )
+
+    def test_name_identifier_scheme_must_be_string(self):
+        """Checks that name identifier schemes must be strings."""
+        with self.assertRaises(TypeError):
+            NameIdentifier(
+                name_identifier="https://orcid.org/0000-0001-2345-6789",
+                name_identifier_scheme=123,
+            )
+
+    def test_name_identifier_rejects_invalid_identifier_prefix(self):
+        """Checks that name identifiers must use an allowed prefix."""
+        with self.assertRaises(ValueError):
+            NameIdentifier(
+                name_identifier="https://example.com/0000-0001-2345-6789",
+                name_identifier_scheme="ORCID",
+            )
+
+    def test_name_identifier_rejects_invalid_identifier_scheme(self):
+        """Checks that name identifier schemes use the controlled list."""
+        with self.assertRaises(ValueError):
+            NameIdentifier(
+                name_identifier="https://orcid.org/0000-0001-2345-6789",
+                name_identifier_scheme="GRID",
+            )
+
+    def test_name_identifier_scheme_uri_must_be_string(self):
+        """Checks that name identifier scheme URIs must be strings."""
+        with self.assertRaises(TypeError):
+            NameIdentifier(
+                name_identifier="https://orcid.org/0000-0001-2345-6789",
+                name_identifier_scheme="ORCID",
+                scheme_uri=123,
+            )
+
+    def test_name_identifier_rejects_invalid_scheme_uri(self):
+        """Checks that name identifier scheme URIs use the controlled list."""
+        with self.assertRaises(ValueError):
+            NameIdentifier(
+                name_identifier="https://orcid.org/0000-0001-2345-6789",
+                name_identifier_scheme="ORCID",
+                scheme_uri="https://example.com",
+            )
+
     def test_creator_stores_name_and_name_type(self):
         """Checks that a creator stores name, type, and empty optional lists."""
         item_creator = Creator(
@@ -184,21 +298,23 @@ class MetadataTest(unittest.TestCase):
 
     def test_creator_stores_name_identifiers(self):
         """Checks that a creator stores multiple name identifiers."""
+        first_name_identifier = NameIdentifier(
+            name_identifier="https://orcid.org/0000-0001-2345-6789",
+            name_identifier_scheme="ORCID",
+        )
+        second_name_identifier = NameIdentifier(
+            name_identifier="https://ror.org/12345",
+            name_identifier_scheme="ROR",
+        )
         item_creator = Creator(
             creator_name="Ada Lovelace",
             name_type="Personal",
-            name_identifiers=[
-                "https://orcid.org/0000-0001-2345-6789",
-                "https://ror.org/12345",
-            ],
+            name_identifiers=[first_name_identifier, second_name_identifier],
         )
 
         self.assertEqual(
             item_creator.name_identifiers,
-            [
-                "https://orcid.org/0000-0001-2345-6789",
-                "https://ror.org/12345",
-            ],
+            [first_name_identifier, second_name_identifier],
         )
 
     def test_creator_requires_name_and_name_type(self):
@@ -231,17 +347,8 @@ class MetadataTest(unittest.TestCase):
 
         self.assertEqual(item_creator.name_type, "CreatorOnly")
 
-    def test_creator_rejects_invalid_name_identifier_prefix(self):
-        """Checks that creator name identifiers must use allowed prefixes."""
-        with self.assertRaises(ValueError):
-            Creator(
-                creator_name="Ada Lovelace",
-                name_type="Personal",
-                name_identifiers=["https://example.com/123"],
-            )
-
-    def test_creator_rejects_non_string_name_identifier(self):
-        """Checks that creator name identifiers must be strings."""
+    def test_creator_rejects_non_name_identifier(self):
+        """Checks that creator name identifiers must be NameIdentifier objects."""
         with self.assertRaises(TypeError):
             Creator(
                 creator_name="Ada Lovelace",
@@ -261,8 +368,9 @@ class MetadataTest(unittest.TestCase):
     def test_creator_stores_affiliations(self):
         """Checks that a creator stores affiliation objects."""
         item_affiliation = Affiliation(
-            identifier="https://ror.org/03yrm5c26",
             name="Example University",
+            affiliation_identifier="https://ror.org/03yrm5c26",
+            affiliation_identifier_scheme="ROR",
         )
         item_creator = Creator(
             creator_name="Ada Lovelace",
@@ -275,8 +383,9 @@ class MetadataTest(unittest.TestCase):
     def test_creator_affiliations_must_be_list(self):
         """Checks that creator affiliations must be supplied as a list."""
         item_affiliation = Affiliation(
-            identifier="https://ror.org/03yrm5c26",
             name="Example University",
+            affiliation_identifier="https://ror.org/03yrm5c26",
+            affiliation_identifier_scheme="ROR",
         )
 
         with self.assertRaises(TypeError):
@@ -312,22 +421,24 @@ class MetadataTest(unittest.TestCase):
 
     def test_contributor_stores_name_identifiers(self):
         """Checks that a contributor stores multiple name identifiers."""
+        first_name_identifier = NameIdentifier(
+            name_identifier="https://orcid.org/0000-0001-2345-6789",
+            name_identifier_scheme="ORCID",
+        )
+        second_name_identifier = NameIdentifier(
+            name_identifier="https://ror.org/12345",
+            name_identifier_scheme="ROR",
+        )
         item_contributor = Contributor(
             contributor_name="Grace Hopper",
             name_type="Personal",
             contributor_type="Researcher",
-            name_identifiers=[
-                "https://orcid.org/0000-0001-2345-6789",
-                "https://ror.org/12345",
-            ],
+            name_identifiers=[first_name_identifier, second_name_identifier],
         )
 
         self.assertEqual(
             item_contributor.name_identifiers,
-            [
-                "https://orcid.org/0000-0001-2345-6789",
-                "https://ror.org/12345",
-            ],
+            [first_name_identifier, second_name_identifier],
         )
 
     def test_contributor_requires_name_type_and_contributor_type(self):
@@ -387,18 +498,8 @@ class MetadataTest(unittest.TestCase):
                 contributor_type="Reviewer",
             )
 
-    def test_contributor_rejects_invalid_name_identifier_prefix(self):
-        """Checks that contributor name identifiers must use allowed prefixes."""
-        with self.assertRaises(ValueError):
-            Contributor(
-                contributor_name="Grace Hopper",
-                name_type="Personal",
-                contributor_type="Researcher",
-                name_identifiers=["https://example.com/123"],
-            )
-
-    def test_contributor_rejects_non_string_name_identifier(self):
-        """Checks that contributor name identifiers must be strings."""
+    def test_contributor_rejects_non_name_identifier(self):
+        """Checks that contributor name identifiers must be NameIdentifier objects."""
         with self.assertRaises(TypeError):
             Contributor(
                 contributor_name="Grace Hopper",
@@ -420,8 +521,9 @@ class MetadataTest(unittest.TestCase):
     def test_contributor_stores_affiliations(self):
         """Checks that a contributor stores affiliation objects."""
         item_affiliation = Affiliation(
-            identifier="https://ror.org/03yrm5c26",
             name="Example University",
+            affiliation_identifier="https://ror.org/03yrm5c26",
+            affiliation_identifier_scheme="ROR",
         )
         item_contributor = Contributor(
             contributor_name="Grace Hopper",
@@ -435,8 +537,9 @@ class MetadataTest(unittest.TestCase):
     def test_contributor_affiliations_must_be_list(self):
         """Checks that contributor affiliations must be supplied as a list."""
         item_affiliation = Affiliation(
-            identifier="https://ror.org/03yrm5c26",
             name="Example University",
+            affiliation_identifier="https://ror.org/03yrm5c26",
+            affiliation_identifier_scheme="ROR",
         )
 
         with self.assertRaises(TypeError):

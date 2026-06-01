@@ -14,6 +14,7 @@ from doi_manager.models import (
     GeoLocationPoint,
     Identifier,
     Metadata,
+    NameIdentifier,
     PolygonPoint,
     Publisher,
     Record,
@@ -28,8 +29,10 @@ from doi_manager.models import (
 class DataCitePayloadTest(unittest.TestCase):
     def metadata(self, identifier_value: str | None = None):
         affiliation = Affiliation(
-            identifier="https://ror.org/03yrm5c26",
             name="Example University",
+            affiliation_identifier="https://ror.org/03yrm5c26",
+            affiliation_identifier_scheme="ROR",
+            scheme_uri="https://ror.org/",
         )
         metadata_kwargs = {}
         if identifier_value is not None:
@@ -43,7 +46,13 @@ class DataCitePayloadTest(unittest.TestCase):
                 Creator(
                     creator_name="Ada Lovelace",
                     name_type="Personal",
-                    name_identifiers=["https://orcid.org/0000-0001-2345-6789"],
+                    name_identifiers=[
+                        NameIdentifier(
+                            name_identifier="https://orcid.org/0000-0001-2345-6789",
+                            name_identifier_scheme="ORCID",
+                            scheme_uri="https://orcid.org",
+                        )
+                    ],
                     affiliations=[affiliation],
                 )
             ],
@@ -69,7 +78,13 @@ class DataCitePayloadTest(unittest.TestCase):
                     contributor_name="Grace Hopper",
                     name_type="Personal",
                     contributor_type="Researcher",
-                    name_identifiers=["https://orcid.org/0000-0002-0000-0000"],
+                    name_identifiers=[
+                        NameIdentifier(
+                            name_identifier="https://orcid.org/0000-0002-0000-0000",
+                            name_identifier_scheme="ORCID",
+                            scheme_uri="https://orcid.org",
+                        )
+                    ],
                     affiliations=[affiliation],
                 )
             ],
@@ -155,6 +170,22 @@ class DataCitePayloadTest(unittest.TestCase):
         self.assertEqual(attrs["publisher"]["name"], "Example Publisher")
         self.assertEqual(attrs["publicationYear"], 2026)
         self.assertEqual(attrs["types"]["resourceTypeGeneral"], "Dataset")
+        self.assertEqual(
+            attrs["creators"][0]["nameIdentifiers"][0]["nameIdentifier"],
+            "https://orcid.org/0000-0001-2345-6789",
+        )
+        self.assertEqual(
+            attrs["creators"][0]["nameIdentifiers"][0]["nameIdentifierScheme"],
+            "ORCID",
+        )
+        self.assertEqual(
+            attrs["creators"][0]["affiliation"][0]["affiliationIdentifier"],
+            "https://ror.org/03yrm5c26",
+        )
+        self.assertEqual(
+            attrs["creators"][0]["affiliation"][0]["affiliationIdentifierScheme"],
+            "ROR",
+        )
         self.assertEqual(attrs["subjects"][0]["subject"], "Metadata")
         self.assertEqual(attrs["contributors"][0]["contributorType"], "Researcher")
         self.assertEqual(attrs["dates"][0]["dateType"], "Updated")

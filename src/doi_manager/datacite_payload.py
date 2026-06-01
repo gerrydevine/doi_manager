@@ -118,36 +118,22 @@ def _contributor_to_payload(contributor) -> dict:
     )
 
 
-def _name_identifier_to_payload(name_identifier: str) -> dict:
-    scheme, scheme_uri = _identifier_scheme(name_identifier)
+def _name_identifier_to_payload(name_identifier) -> dict:
     return _compact(
         {
-            "nameIdentifier": name_identifier,
-            "nameIdentifierScheme": scheme,
-            "schemeUri": scheme_uri,
+            "nameIdentifier": name_identifier.name_identifier,
+            "nameIdentifierScheme": name_identifier.name_identifier_scheme,
+            "schemeUri": name_identifier.scheme_uri,
         }
     )
-
-
-def _identifier_scheme(identifier: str) -> tuple[str, str | None]:
-    if identifier.startswith("https://orcid.org/"):
-        return "ORCID", "https://orcid.org"
-
-    if identifier.startswith("https://ror.org/"):
-        return "ROR", "https://ror.org"
-
-    if identifier.startswith("https://isni.org/"):
-        return "ISNI", "https://isni.org"
-
-    return "Other", None
 
 
 def _affiliation_to_payload(affiliation) -> dict:
     return _compact(
         {
             "name": affiliation.name,
-            "affiliationIdentifier": affiliation.identifier,
-            "affiliationIdentifierScheme": affiliation.affiliationIdentifierScheme,
+            "affiliationIdentifier": affiliation.affiliation_identifier,
+            "affiliationIdentifierScheme": affiliation.affiliation_identifier_scheme,
             "schemeUri": affiliation.scheme_uri,
         }
     )

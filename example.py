@@ -10,6 +10,7 @@ from doi_manager import (
     GeoLocation,
     GeoLocationBox,
     GeoLocationPoint,
+    NameIdentifier,
     PolygonPoint,
     Publisher,
     Record,
@@ -37,12 +38,16 @@ TITLES = [
 
 # Create some affiliations that can be attached to people or organizations.
 affiliation_1 = Affiliation(
-    identifier="https://ror.org/03r8z3t63",
     name="UNSW Sydney",
+    affiliation_identifier="https://ror.org/03r8z3t63",
+    affiliation_identifier_scheme="ROR",
+    scheme_uri="https://ror.org/",
 )
 affiliation_2 = Affiliation(
-    identifier="https://ror.org/01ej9dk98",
     name="The University of Melbourne",
+    affiliation_identifier="https://ror.org/01ej9dk98",
+    affiliation_identifier_scheme="ROR",
+    scheme_uri="https://ror.org/",
 )
 
 # Create an optional alternate identifier for the resource.
@@ -79,22 +84,36 @@ item_related_identifier_3 = RelatedIdentifier(
 )
 
 # Create creators with an ORCID name identifier.
+creator_name_identifier_1 = NameIdentifier(
+    name_identifier="https://orcid.org/0000-0002-1825-0097",
+    name_identifier_scheme="ORCID",
+    scheme_uri="https://orcid.org",
+)
+creator_name_identifier_2 = NameIdentifier(
+    name_identifier="https://orcid.org/0000-0002-1825-0098",
+    name_identifier_scheme="ORCID",
+    scheme_uri="https://orcid.org",
+)
 creator_1 = Creator(
     creator_name="Ada Lovelace",
     name_type="Personal",
-    name_identifiers=["https://orcid.org/0000-0002-1825-0097"],
+    name_identifiers=[creator_name_identifier_1],
     affiliations=[affiliation_1, affiliation_2],
 )
 
 creator_2 = Creator(
     creator_name="Alan Turing",
     name_type="Personal",
-    name_identifiers=["https://orcid.org/0000-0002-1825-0098"],
+    name_identifiers=[creator_name_identifier_2],
     affiliations=[affiliation_1],
 )
 
 # Create an optional contributor with an ORCID name identifier and affiliation.
-contributor_identifier = "https://orcid.org/0000-0001-5109-3700"
+contributor_identifier = NameIdentifier(
+    name_identifier="https://orcid.org/0000-0001-5109-3700",
+    name_identifier_scheme="ORCID",
+    scheme_uri="https://orcid.org",
+)
 item_contributor = Contributor(
     contributor_name="Grace Hopper",
     name_type="Personal",
@@ -299,17 +318,20 @@ for index, related_identifier in enumerate(metadata.related_identifiers, start=1
 # Inspect the first creator.
 print(f"Creator name: {metadata.creators[0].creator_name}")
 print(f"Creator name type: {metadata.creators[0].name_type}")
-print(f"Creator name identifier: {metadata.creators[0].name_identifiers[0]}")
+print(f"Creator name identifier: {metadata.creators[0].name_identifiers[0].name_identifier}")
 
 # Inspect the first contributor.
 print(f"Contributor name: {metadata.contributors[0].contributor_name}")
 print(f"Contributor name type: {metadata.contributors[0].name_type}")
 print(f"Contributor type: {metadata.contributors[0].contributor_type}")
-print(f"Contributor name identifier: {metadata.contributors[0].name_identifiers[0]}")
+print(
+    "Contributor name identifier: "
+    f"{metadata.contributors[0].name_identifiers[0].name_identifier}"
+)
 print(f"Contributor affiliation: {metadata.contributors[0].affiliations[0].name}")
 print(
     "Contributor affiliation identifier: "
-    f"{metadata.contributors[0].affiliations[0].identifier}"
+    f"{metadata.contributors[0].affiliations[0].affiliation_identifier}"
 )
 
 # Inspect the first title.

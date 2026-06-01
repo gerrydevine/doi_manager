@@ -165,7 +165,22 @@ CREATOR_NAME_IDENTIFIER_PREFIXES = [
 ]
 
 # Allowed URL prefixes for affiliation identifiers.
-AFFILIATION_IDENTIFIER_PREFIXES = ["https://ror.org/"]
+AFFILIATION_IDENTIFIER_PREFIXES = [
+    "https://ror.org/",
+    "https://isni.org/"
+]
+
+# Allowed values for affiliation identifier schemes.
+AFFILIATION_IDENTIFIER_SCHEME_VALUES = [
+    "ROR",
+    "ISNI"
+]
+
+# Allowed values for affiliation identifier schemes.
+AFFILIATION_SCHEME_URI_VALUES = [
+    "https://ror.org/",
+    "https://isni.org/"
+]
 
 # Allowed URL prefixes for publisher identifiers.
 PUBLISHER_IDENTIFIER_PREFIXES = ["https://ror.org/"]
@@ -201,4 +216,22 @@ RIGHTS_IDENTIFIER_VALUES = [
     "CC BY-NC 4.0",
     "CC BY-NC-SA 4.0",
     "CC BY-NC-ND 4.0",
+]
+
+NAME_IDENTIFIER_PREFIXES = [
+    "https://orcid.org",
+    "https://isni.org",
+    "https://ror.org",
+]
+
+NAME_IDENTIFIER_SCHEME_VALUES = [
+    "ORCID",
+    "ISNI",
+    "ROR"
+]
+
+NAME_IDENTIFIER_SCHEME_URI_VALUES = [
+    "https://orcid.org",
+    "https://isni.org",
+    "https://ror.org",
 ]

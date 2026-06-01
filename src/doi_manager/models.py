@@ -2,14 +2,18 @@ import uuid
 from datetime import datetime
 from .vocabs import (
     AFFILIATION_IDENTIFIER_PREFIXES,
+    AFFILIATION_IDENTIFIER_SCHEME_VALUES,
+    AFFILIATION_SCHEME_URI_VALUES,
     CONTRIBUTOR_NAME_TYPE_VALUES,
     CONTRIBUTOR_TYPE_VALUES,
-    CREATOR_NAME_IDENTIFIER_PREFIXES,
     CREATOR_NAME_TYPE_VALUES,
     DATE_TYPE_VALUES,
     DESCRIPTION_TYPE_VALUES,
     FUNDER_IDENTIFIER_TYPE_VALUES,
     IDENTIFIER_TYPE_ATTR_VALUES,
+    NAME_IDENTIFIER_SCHEME_VALUES,
+    NAME_IDENTIFIER_PREFIXES,
+    NAME_IDENTIFIER_SCHEME_URI_VALUES,
     PUBLISHER_IDENTIFIER_PREFIXES,
     RELATED_IDENTIFIER_TYPE_VALUES,
     RELATION_TYPE_VALUES,
@@ -441,24 +445,91 @@ class Affiliation:
     def __init__(
         self,
         *,
-        identifier: str | None = None,
-        name: str | None = None,
+        name: str,
+        affiliation_identifier: str | None = None,
+        affiliation_identifier_scheme: str | None = None,
+        scheme_uri: str | None = None,
     ):
-        if identifier is not None:
-            if not isinstance(identifier, str):
-                raise TypeError("identifier must be a string")
-
-            if not identifier.startswith(tuple(AFFILIATION_IDENTIFIER_PREFIXES)):
-                values = ", ".join(AFFILIATION_IDENTIFIER_PREFIXES)
-                raise ValueError(f"identifier must begin with one of: {values}")
-
-        if name is not None and not isinstance(name, str):
+        if not isinstance(name, str):
             raise TypeError("name must be a string")
 
-        self.identifier = identifier
+        if affiliation_identifier is not None:
+            if not isinstance(affiliation_identifier, str):
+                raise TypeError("affiliation_identifier must be a string")
+
+            if not affiliation_identifier.startswith(
+                tuple(AFFILIATION_IDENTIFIER_PREFIXES)
+            ):
+                values = ", ".join(AFFILIATION_IDENTIFIER_PREFIXES)
+                raise ValueError(
+                    f"affiliation_identifier must begin with one of: {values}"
+                )
+
+        if affiliation_identifier is not None:
+            if affiliation_identifier_scheme is None:
+                raise ValueError(
+                    "affiliation_identifier_scheme is required when "
+                    "affiliation_identifier is supplied"
+                )
+
+        if affiliation_identifier_scheme is not None:
+            if not isinstance(affiliation_identifier_scheme, str):
+                raise TypeError("affiliation_identifier_scheme must be a string")
+
+            if affiliation_identifier_scheme not in AFFILIATION_IDENTIFIER_SCHEME_VALUES:
+                values = ", ".join(AFFILIATION_IDENTIFIER_SCHEME_VALUES)
+                raise ValueError(
+                    f"affiliation_identifier_scheme must be one of: {values}"
+                )
+
+        if scheme_uri is not None:
+            if not isinstance(scheme_uri, str):
+                raise TypeError("scheme_uri must be a string")
+
+            if scheme_uri not in AFFILIATION_SCHEME_URI_VALUES:
+                values = ", ".join(AFFILIATION_SCHEME_URI_VALUES)
+                raise ValueError(f"scheme_uri must be one of: {values}")
+
+        self.affiliation_identifier = affiliation_identifier
         self.name = name
-        self.affiliationIdentifierScheme = "ROR" if identifier else None
-        self.scheme_uri = "https://ror.org" if identifier else None
+        self.affiliation_identifier_scheme = affiliation_identifier_scheme
+        self.scheme_uri = scheme_uri
+
+
+
+class NameIdentifier:
+    def __init__(
+        self,
+        *,
+        name_identifier: str,
+        name_identifier_scheme: str,
+        scheme_uri: str | None = None,
+    ):
+        if not isinstance(name_identifier, str):
+            raise TypeError("name_identifier must be a string")
+
+        if not isinstance(name_identifier_scheme, str):
+            raise TypeError("name_identifier_scheme must be a string")
+
+        if not name_identifier.startswith(tuple(NAME_IDENTIFIER_PREFIXES)):
+            values = ", ".join(NAME_IDENTIFIER_PREFIXES)
+            raise ValueError(f"name_identifier must begin with one of: {values}")
+
+        if name_identifier_scheme not in NAME_IDENTIFIER_SCHEME_VALUES:
+            values = ", ".join(NAME_IDENTIFIER_SCHEME_VALUES)
+            raise ValueError(f"name_identifier_scheme must be one of: {values}")
+
+        if scheme_uri is not None:
+            if not isinstance(scheme_uri, str):
+                raise TypeError("scheme_uri must be a string")
+
+            if scheme_uri not in NAME_IDENTIFIER_SCHEME_URI_VALUES:
+                values = ", ".join(NAME_IDENTIFIER_SCHEME_URI_VALUES)
+                raise ValueError(f"scheme_uri must be one of: {values}")
+
+        self.name_identifier = name_identifier
+        self.name_identifier_scheme = name_identifier_scheme
+        self.scheme_uri = scheme_uri
 
 
 class Creator:
@@ -467,7 +538,10 @@ class Creator:
         *,
         creator_name: str,
         name_type: str,
-        name_identifiers: list[str] | None = None,
+        lang: str | None = None,
+        given_name: str | None = None,
+        family_name: str | None = None,
+        name_identifiers: list[NameIdentifier] | None = None,
         affiliations: list[Affiliation] | None = None,
     ):
         if not isinstance(creator_name, str):
@@ -484,13 +558,9 @@ class Creator:
             raise TypeError("name_identifiers must be a list")
 
         for name_identifier in name_identifiers:
-            if not isinstance(name_identifier, str):
-                raise TypeError("name_identifiers must contain only strings")
-
-            if not name_identifier.startswith(tuple(CREATOR_NAME_IDENTIFIER_PREFIXES)):
-                values = ", ".join(CREATOR_NAME_IDENTIFIER_PREFIXES)
-                raise ValueError(
-                    f"name_identifiers must begin with one of: {values}"
+            if not isinstance(name_identifier, NameIdentifier):
+                raise TypeError(
+                    "name_identifiers must contain only NameIdentifier objects"
                 )
 
         if affiliations is None:
@@ -505,9 +575,10 @@ class Creator:
 
         self.creator_name = creator_name
         self.name_type = name_type
-        # self.name_identifiers = list(name_identifiers)
+        self.given_name = given_name
+        self.family_name = family_name
+        self.lang = lang
         self.name_identifiers = name_identifiers
-        # self.affiliations = list(affiliations)
         self.affiliations = affiliations
 
 
@@ -518,7 +589,7 @@ class Contributor:
         contributor_name: str,
         name_type: str,
         contributor_type: str,
-        name_identifiers: list[str] | None = None,
+        name_identifiers: list[NameIdentifier] | None = None,
         affiliations: list[Affiliation] | None = None,
     ):
         if not isinstance(contributor_name, str):
@@ -542,13 +613,9 @@ class Contributor:
             raise TypeError("name_identifiers must be a list")
 
         for name_identifier in name_identifiers:
-            if not isinstance(name_identifier, str):
-                raise TypeError("name_identifiers must contain only strings")
-
-            if not name_identifier.startswith(tuple(CREATOR_NAME_IDENTIFIER_PREFIXES)):
-                values = ", ".join(CREATOR_NAME_IDENTIFIER_PREFIXES)
-                raise ValueError(
-                    f"name_identifiers must begin with one of: {values}"
+            if not isinstance(name_identifier, NameIdentifier):
+                raise TypeError(
+                    "name_identifiers must contain only NameIdentifier objects"
                 )
 
         if affiliations is None:
