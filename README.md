@@ -11,26 +11,7 @@ Install the latest version from the default branch:
 python -m pip install git+https://github.com/YOUR_USERNAME/YOUR_REPO.git
 ```
 
-Install from a specific branch:
-
-```bash
-python -m pip install git+https://github.com/YOUR_USERNAME/YOUR_REPO.git@main
-```
-
-Install from a specific release tag:
-
-```bash
-python -m pip install git+https://github.com/YOUR_USERNAME/YOUR_REPO.git@v0.1.0
-```
-
 Replace `YOUR_USERNAME/YOUR_REPO` with the GitHub owner and repository name.
-
-### Local development
-
-```bash
-python -m pip install -e .
-python -m unittest discover -s tests
-```
 
 ### DataCite credentials
 
