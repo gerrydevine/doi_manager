@@ -51,10 +51,17 @@ my_project/
 from doi_manager import (
     Affiliation,
     Creator,
+    Contributor,
+    Description,
     Metadata,
     Record,
+    Date,
     Publisher,
+    Subject,
     NameIdentifier,
+    FundingReference,
+    AlternateIdentifier,
+    RelatedIdentifier,
     Title,
     Types,
     create_draft_and_assign_doi,
@@ -76,12 +83,12 @@ name_identifier_1 = NameIdentifier(
 
 # Create name identifier for creator 2.
 name_identifier_2 = NameIdentifier(
-    name_identifier="https://ror.org/01trzbr20",
-    name_identifier_scheme="ROR",
-    scheme_uri="https://ror.org",
+    name_identifier="https://orcid.org/0000-0002-1825-0097",
+    name_identifier_scheme="ORCID",
+    scheme_uri="https://orcid.org",
 )
 
-# Create Personal Creator with an ORCID name identifier and affiliation.
+# Create Personal Creator 1 with an ORCID name identifier and affiliation.
 creator_1 = Creator(
     creator_name="Josiah Carberry",
     name_type="Personal",
@@ -89,11 +96,23 @@ creator_1 = Creator(
     affiliations=[affiliation_1],
 )
 
-# Create Organizational Creator with an ROR name identifier.
 creator_2 = Creator(
-    creator_name="Mark Wainwright Analytical Centre",
-    name_type="Organizational",
+    creator_name="Janet White",
+    name_type="Personal",
     name_identifiers=[name_identifier_2],
+)
+
+# Create Organizational Creator with an ROR name identifier.
+name_identifier_3 = NameIdentifier(
+    name_identifier="https://ror.org/03r8z3t63",
+    name_identifier_scheme="ROR",
+    scheme_uri="https://ror.org",
+)
+contributor_1 = Contributor(
+    contributor_name="UNSW",
+    name_type="Organizational",
+    contributor_type="HostingInstitution",
+    name_identifiers=[name_identifier_3],
 )
 
 # Create a Publisher entry
@@ -105,19 +124,65 @@ publisher = Publisher(
     lang="en",
 )
 
-# Create Subject entries
+# Create an abstract
+description_1 = Description(
+    description="""
+        The Thermo Scientific Orbitrap Exploris 240 is a high-resolution accurate-mass LC-MS/MS mass 
+        spectrometer designed for research labs that need strong qualitative identification and reliable 
+        quantitative performance across complex samples.
+        It uses Thermo Fishers High-Field Orbitrap mass analyzer to deliver high mass resolution, 
+        accurate mass measurement, and high-quality MS/MS spectra. Thermo Fisher positions it as a 
+        versatile “workhorse” system for applications such as proteomics, translational proteomics, 
+        metabolomics, biotherapeutic characterization, intact protein analysis, clinical research, 
+        food/beverage testing, environmental analysis, and PFAS-related workflows.
+    """,
+    description_type="Abstract",
+)
+
+# Create a Subject entry 1
 subject_1 = Subject(
     subject="Climate change processes",
-    schemeUri="https://www.abs.gov.au/statistics/classifications/australian-and-new-zealand-standard-research-classification-anzsrc",
+    scheme_uri="https://www.abs.gov.au/statistics/classifications/australian-and-new-zealand-standard-research-classification-anzsrc",
     subject_scheme="ANZSRC Fields of Research",
     classification_code="370201",
 )
 # Create a Subject entry 2
 subject_2 = Subject(
     subject="Climatalogy",
-    schemeUri="https://www.abs.gov.au/statistics/classifications/australian-and-new-zealand-standard-research-classification-anzsrc",
+    scheme_uri="https://www.abs.gov.au/statistics/classifications/australian-and-new-zealand-standard-research-classification-anzsrc",
     subject_scheme="ANZSRC Fields of Research",
     classification_code="370202",
+)
+
+# Add Funding
+funding_reference_1 = FundingReference(
+    funder_name="Australian Research Council",
+    funder_identifier="https://ror.org/05mmh0f86",
+    funder_identifier_type="ROR",
+    award_title="ARC LIEF Award 123ABC",
+    award_number="AWD-123",
+    award_uri="https://example.com/awards/AWD-123",
+)
+
+# Add an alternate identifier for the record.
+alternate_identifier = AlternateIdentifier(
+    alternate_identifier_type="local identifier",
+    alternate_identifier="SOSNTV6-63BSTDB",
+)
+
+# Add a related identifier
+related_identifier_1 = RelatedIdentifier(
+    related_identifier="https://doi.org/10.123/5435493",
+    related_identifier_type="DOI",
+    relation_type="IsDescribedBy",
+    resource_type_general="JournalArticle",
+    relation_type_information="Documentation journal article",
+)
+
+# Add a date issued
+date_1 = Date(
+    date="2026", 
+    date_type="Issued"
 )
 
 metadata = Metadata(
@@ -132,6 +197,11 @@ metadata = Metadata(
         resource_type_general="Instrument",
     ),
     subjects=[subject_1, subject_2],
+    descriptions=[description_1],
+    funding_references=[funding_reference_1],
+    dates=[date_1],
+    alternate_identifiers=[alternate_identifier],
+    related_identifiers=[related_identifier_1,],
     language="en"
 )
 
