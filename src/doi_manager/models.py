@@ -133,7 +133,7 @@ class Subject:
         self,
         *,
         subject: str,
-        lang: str = "en",
+        lang: str | None = None,
         scheme_uri: str | None = None,
         value_uri: str | None = None,
         subject_scheme: str | None = None,
@@ -142,7 +142,7 @@ class Subject:
         if not isinstance(subject, str):
             raise TypeError("subject must be a string")
 
-        if not isinstance(lang, str):
+        if lang is not None and not isinstance(lang, str):
             raise TypeError("lang must be a string")
 
         optional_strings = {
@@ -705,7 +705,7 @@ class Metadata:
         types: Types,
         publication_year: str | None = None,
         identifier: Identifier | None = None,
-        language: str = "en",
+        language: str | None = None,
         subjects: list[Subject] | None = None,
         contributors: list[Contributor] | None = None,
         dates: list[Date] | None = None,
@@ -728,7 +728,7 @@ class Metadata:
         if len(publication_year) != 4 or not publication_year.isdigit():
             raise ValueError("publication_year must be a four digit year")
 
-        if not isinstance(language, str):
+        if language is not None and not isinstance(language, str):
             raise TypeError("language must be a string")
 
         if identifier is not None and not isinstance(identifier, Identifier):

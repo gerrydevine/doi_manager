@@ -219,10 +219,10 @@ item_rights_1 = Rights(
 
 # Create optional funding references for the resource.
 item_funding_reference_1 = FundingReference(
-    funder_name="Example Research Council",
-    funder_identifier="https://ror.org/03yrm5c26",
+    funder_name="Australian Research Council",
+    funder_identifier="https://ror.org/05mmh0f86",
     funder_identifier_type="ROR",
-    award_title="Example Award",
+    award_title="ARC LIEF Award 123ABC",
     award_number="AWD-123",
     award_uri="https://example.com/awards/AWD-123",
 )

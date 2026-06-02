@@ -27,7 +27,11 @@ from doi_manager.models import (
 
 
 class DataCitePayloadTest(unittest.TestCase):
-    def metadata(self, identifier_value: str | None = None):
+    def metadata(
+        self,
+        identifier_value: str | None = None,
+        language: str | None = None,
+    ):
         affiliation = Affiliation(
             name="Example University",
             affiliation_identifier="https://ror.org/03yrm5c26",
@@ -64,6 +68,7 @@ class DataCitePayloadTest(unittest.TestCase):
                 scheme_uri="https://ror.org/",
             ),
             publication_year="2026",
+            language=language,
             types=Types(
                 resource_type="Primary Dataset",
                 resource_type_general="Dataset",
@@ -218,6 +223,14 @@ class DataCitePayloadTest(unittest.TestCase):
             "Example Research Council",
         )
         self.assertEqual(attrs["rightsList"][0]["rightsIdentifier"], "CC BY 4.0")
+        self.assertNotIn("language", attrs)
+
+    def test_generate_datacite_payload_maps_metadata_language_when_supplied(self):
+        record = Record(metadata=self.metadata(language="fr"))
+
+        payload = generate_datacite_payload(record, "10.80402")
+
+        self.assertEqual(payload["data"]["attributes"]["language"], "fr")
 
     def test_generate_datacite_payload_omits_missing_doi(self):
         record = Record(metadata=self.metadata())

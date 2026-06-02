@@ -45,39 +45,97 @@ my_project/
 ```
 
 
-### Use
+### Example Use
 
 ```python
 from doi_manager import (
+    Affiliation,
     Creator,
     Metadata,
-    Publisher,
     Record,
+    Publisher,
+    NameIdentifier,
     Title,
     Types,
     create_draft_and_assign_doi,
 )
 
+
+# Create affiliation and name identifier for creator 1.
+affiliation_1 = Affiliation(
+    name="UNSW Sydney",
+    affiliation_identifier="https://ror.org/03r8z3t63",
+    affiliation_identifier_scheme="ROR",
+    scheme_uri="https://ror.org/",
+)
+name_identifier_1 = NameIdentifier(
+    name_identifier="https://orcid.org/0000-0002-1825-0097",
+    name_identifier_scheme="ORCID",
+    scheme_uri="https://orcid.org",
+)
+
+# Create name identifier for creator 2.
+name_identifier_2 = NameIdentifier(
+    name_identifier="https://ror.org/01trzbr20",
+    name_identifier_scheme="ROR",
+    scheme_uri="https://ror.org",
+)
+
+# Create Personal Creator with an ORCID name identifier and affiliation.
+creator_1 = Creator(
+    creator_name="Josiah Carberry",
+    name_type="Personal",
+    name_identifiers=[name_identifier_1],
+    affiliations=[affiliation_1],
+)
+
+# Create Organizational Creator with an ROR name identifier.
+creator_2 = Creator(
+    creator_name="Mark Wainwright Analytical Centre",
+    name_type="Organizational",
+    name_identifiers=[name_identifier_2],
+)
+
+# Create a Publisher entry
+publisher = Publisher(
+    name="UNSW Sydney",
+    publisher_identifier="https://ror.org/03r8z3t63",
+    publisher_identifier_scheme="ROR",
+    scheme_uri = "https://ror.org/",
+    lang="en",
+)
+
+# Create Subject entries
+subject_1 = Subject(
+    subject="Climate change processes",
+    schemeUri="https://www.abs.gov.au/statistics/classifications/australian-and-new-zealand-standard-research-classification-anzsrc",
+    subject_scheme="ANZSRC Fields of Research",
+    classification_code="370201",
+)
+# Create a Subject entry 2
+subject_2 = Subject(
+    subject="Climatalogy",
+    schemeUri="https://www.abs.gov.au/statistics/classifications/australian-and-new-zealand-standard-research-classification-anzsrc",
+    subject_scheme="ANZSRC Fields of Research",
+    classification_code="370202",
+)
+
 metadata = Metadata(
-    creators=[
-        Creator(
-            creator_name="Ada Lovelace",
-            name_type="Personal",
-        )
-    ],
+    creators=[creator_1, creator_2],
     titles=[
-        Title(title="Example research dataset"),
+        Title(title="Thermo Fisher Scientific Orbitrap Exploris 240"),
     ],
-    publisher=Publisher(name="Example University"),
+    publisher=publisher,
     publication_year="2026",
     types=Types(
-        resource_type="Dataset",
-        resource_type_general="Dataset",
+        resource_type="Instrument",
+        resource_type_general="Instrument",
     ),
+    subjects=[subject_1, subject_2],
+    language="en"
 )
 
 record = Record(metadata=metadata)
-
 identifier = create_draft_and_assign_doi(record)
 
 print(identifier.identifier_value)

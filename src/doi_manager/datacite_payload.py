@@ -12,19 +12,21 @@ def generate_datacite_payload(record: Record, doi_prefix: str) -> dict:
         raise ValueError("doi_prefix is required")
 
     metadata = record.metadata
-    attrs = {
-        "prefix": doi_prefix,
-        "creators": [_creator_to_payload(creator) for creator in metadata.creators],
-        "titles": [_title_to_payload(title) for title in metadata.titles],
-        "publisher": _publisher_to_payload(metadata.publisher),
-        "publicationYear": int(metadata.publication_year),
-        "types": {
-            "resourceType": metadata.types.resource_type,
-            "resourceTypeGeneral": metadata.types.resource_type_general,
-        },
-        "language": metadata.language,
-        "url": f"https://unsw_metadata/{record.identifier}",
-    }
+    attrs = _compact(
+        {
+            "prefix": doi_prefix,
+            "creators": [_creator_to_payload(creator) for creator in metadata.creators],
+            "titles": [_title_to_payload(title) for title in metadata.titles],
+            "publisher": _publisher_to_payload(metadata.publisher),
+            "publicationYear": int(metadata.publication_year),
+            "types": {
+                "resourceType": metadata.types.resource_type,
+                "resourceTypeGeneral": metadata.types.resource_type_general,
+            },
+            "language": metadata.language,
+            "url": f"https://unsw_metadata/{record.identifier}",
+        }
+    )
 
     if metadata.identifier is not None and metadata.identifier.identifier_value:
         attrs["doi"] = metadata.identifier.identifier_value

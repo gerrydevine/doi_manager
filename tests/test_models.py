@@ -1547,7 +1547,7 @@ class MetadataTest(unittest.TestCase):
         self.assertEqual(item.publisher, item_publisher)
         self.assertEqual(item.publication_year, "2026")
         self.assertEqual(item.types, item_types)
-        self.assertEqual(item.language, "en")
+        self.assertIsNone(item.language)
         self.assertEqual(item.subjects, [])
         self.assertEqual(item.contributors, [])
         self.assertEqual(item.dates, [])
@@ -1558,7 +1558,7 @@ class MetadataTest(unittest.TestCase):
         self.assertEqual(item.geolocations, [])
 
     def test_metadata_stores_custom_language(self):
-        """Checks that a resource can store a custom language."""
+        """Checks that a resource can store an explicit language."""
         item_identifier = Identifier(
             identifier_value="10.123/example",
             identifier_type_attr="doi",
