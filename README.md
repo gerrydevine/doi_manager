@@ -1,17 +1,15 @@
-## doi_manager
+## DOI Manager
 
 `doi_manager` is a small library for building DOI metadata records and sending
-them to DataCite.
+them to DataCite for DOI allocation.
 
 ### Install
 
 Install the latest version from the default branch:
 
 ```bash
-python -m pip install git+https://github.com/YOUR_USERNAME/YOUR_REPO.git
+python -m pip install git+https://github.com/gerrydevine/doi_manager.git
 ```
-
-Replace `YOUR_USERNAME/YOUR_REPO` with the GitHub owner and repository name.
 
 ### DataCite credentials
 
@@ -36,15 +34,6 @@ DATACITE_URL = "https://api.test.datacite.org/dois"
 DOI_PREFIX = "10.80402"
 ```
 
-For example:
-
-```text
-my_project/
-+-- config.py
-+-- create_doi.py
-```
-
-
 ### Example Use
 
 ```python
@@ -66,7 +55,6 @@ from doi_manager import (
     Types,
     create_draft_and_assign_doi,
 )
-
 
 # Create affiliation and name identifier for creator 1.
 affiliation_1 = Affiliation(
@@ -211,5 +199,4 @@ identifier = create_draft_and_assign_doi(record)
 print(identifier.identifier_value)
 ```
 
-`create_draft_and_assign_doi` creates a draft DOI in DataCite, stores the
-returned DOI on `record.metadata.identifier`, and returns the new identifier.
+`create_draft_and_assign_doi` creates a __draft__ record in DataCite, generates a DOI and returns it.

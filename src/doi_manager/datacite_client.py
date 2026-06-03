@@ -93,9 +93,16 @@ def create_draft_and_assign_doi(
     if record.metadata.identifier is not None and record.metadata.identifier.identifier_value:
         raise ValueError("This record already has an identifier allocated")
 
+    # Load Datacite Config elements
     doi_prefix, datacite_url = load_datacite_config()
+
+    # Handle datacite credentials
     token = auth_token or datacite_login()
+
+    # Generate Datacite-valid payload
     payload = generate_datacite_payload(record, doi_prefix)
+
+    # Post to Datacite
     response_data = post_datacite_payload(
         datacite_url=datacite_url,
         payload=payload,
@@ -106,4 +113,6 @@ def create_draft_and_assign_doi(
     doi = response_data["data"]["id"]
     identifier = Identifier(identifier_value=doi, identifier_type_attr="doi")
     record.metadata.identifier = identifier
-    return identifier
+
+    # return identifier
+    return response_data
