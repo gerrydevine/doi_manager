@@ -83,7 +83,7 @@ def create_draft_and_assign_doi(
     *,
     auth_token: str | None = None,
     urlopen_func=urlopen,
-) -> Identifier:
+) -> dict:
     if not isinstance(record, Record):
         raise TypeError("record must be a Record object")
 
@@ -114,5 +114,4 @@ def create_draft_and_assign_doi(
     identifier = Identifier(identifier_value=doi, identifier_type_attr="doi")
     record.metadata.identifier = identifier
 
-    # return identifier
     return response_data

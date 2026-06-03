@@ -199,4 +199,4 @@ identifier = create_draft_and_assign_doi(record)
 print(identifier.identifier_value)
 ```
 
-`create_draft_and_assign_doi` creates a __draft__ record in DataCite, generates a DOI and returns it.
+`create_draft_and_assign_doi` creates a __draft__ record in DataCite, generates a DOI and returns the Datacite response.

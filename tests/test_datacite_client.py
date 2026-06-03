@@ -81,7 +81,7 @@ class DataCiteClientTest(unittest.TestCase):
                 )
             },
         ):
-            identifier = create_draft_and_assign_doi(
+            response_data = create_draft_and_assign_doi(
                 record,
                 auth_token="Basic test-token",
                 urlopen_func=fake_urlopen,
@@ -95,9 +95,12 @@ class DataCiteClientTest(unittest.TestCase):
             posted_payload["data"]["attributes"]["prefix"],
             "10.80402",
         )
-        self.assertEqual(identifier.identifier_value, "10.80402/example-doi")
-        self.assertEqual(identifier.identifier_type_attr, "doi")
-        self.assertEqual(record.metadata.identifier, identifier)
+        self.assertEqual(response_data["data"]["id"], "10.80402/example-doi")
+        self.assertEqual(
+            record.metadata.identifier.identifier_value,
+            "10.80402/example-doi",
+        )
+        self.assertEqual(record.metadata.identifier.identifier_type_attr, "doi")
         self.assertEqual(record.identifier, record_identifier)
 
     def test_create_draft_datacite_requires_record(self):

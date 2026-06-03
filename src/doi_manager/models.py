@@ -133,7 +133,7 @@ class Subject:
         self,
         *,
         subject: str,
-        lang: str | None = None,
+        lang: str | None = "en",
         scheme_uri: str | None = None,
         value_uri: str | None = None,
         subject_scheme: str | None = None,
