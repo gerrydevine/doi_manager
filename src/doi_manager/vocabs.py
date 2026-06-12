@@ -251,12 +251,15 @@ NAME_IDENTIFIER_PREFIXES = [
     "https://orcid.org",
     "https://isni.org",
     "https://ror.org",
+    "http://",
+    "https://"
 ]
 
 NAME_IDENTIFIER_SCHEME_VALUES = [
     "ORCID",
     "ISNI",
-    "ROR"
+    "ROR",
+    "URL"
 ]
 
 NAME_IDENTIFIER_SCHEME_URI_VALUES = [
