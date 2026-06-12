@@ -47,6 +47,8 @@ DATE_TYPE_VALUES = [
     "Valid",
     "Withdrawn",
     "Other",
+    "Commissioned",
+    "Decommissioned"
 ]
 
 # Allowed values for the general resource type.
