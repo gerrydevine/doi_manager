@@ -39,6 +39,7 @@ class DataCiteClientTest(unittest.TestCase):
             titles=[Title(title="Example resource")],
             publisher=Publisher(name="Example Publisher"),
             publication_year="2026",
+            url="https://example.com/resources/123",
             types=Types(
                 resource_type="Dataset",
                 resource_type_general="Dataset",
@@ -94,6 +95,10 @@ class DataCiteClientTest(unittest.TestCase):
         self.assertEqual(
             posted_payload["data"]["attributes"]["prefix"],
             "10.80402",
+        )
+        self.assertEqual(
+            posted_payload["data"]["attributes"]["url"],
+            "https://example.com/resources/123",
         )
         self.assertEqual(response_data["data"]["id"], "10.80402/example-doi")
         self.assertEqual(

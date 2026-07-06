@@ -31,6 +31,7 @@ class DataCitePayloadTest(unittest.TestCase):
         self,
         identifier_value: str | None = None,
         language: str | None = None,
+        url: str | None = None,
     ):
         affiliation = Affiliation(
             name="Example University",
@@ -69,6 +70,7 @@ class DataCitePayloadTest(unittest.TestCase):
             ),
             publication_year="2026",
             language=language,
+            url=url,
             types=Types(
                 resource_type="Primary Dataset",
                 resource_type_general="Dataset",
@@ -231,6 +233,16 @@ class DataCitePayloadTest(unittest.TestCase):
         payload = generate_datacite_payload(record, "10.80402")
 
         self.assertEqual(payload["data"]["attributes"]["language"], "fr")
+
+    def test_generate_datacite_payload_maps_metadata_url_when_supplied(self):
+        record = Record(metadata=self.metadata(url="https://example.com/resources/123"))
+
+        payload = generate_datacite_payload(record, "10.80402")
+
+        self.assertEqual(
+            payload["data"]["attributes"]["url"],
+            "https://example.com/resources/123",
+        )
 
     def test_generate_datacite_payload_omits_missing_doi(self):
         record = Record(metadata=self.metadata())

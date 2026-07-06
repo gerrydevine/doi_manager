@@ -714,6 +714,7 @@ class Metadata:
         sizes: list[str] | None = None,
         formats: list[str] | None = None,
         version: str | None = None,
+        url: str | None = None,
         descriptions: list[Description] | None = None,
         geolocations: list[GeoLocation] | None = None,
         funding_references: list[FundingReference] | None = None,
@@ -828,6 +829,13 @@ class Metadata:
             if not isinstance(version, str):
                 raise TypeError("version must be a string")
 
+        if url is not None:
+            if not isinstance(url, str):
+                raise TypeError("url must be a string")
+
+            if not url.startswith(("http://", "https://")):
+                raise ValueError("url must start with http:// or https://")
+
         if descriptions is None:
             descriptions = []
 
@@ -886,6 +894,7 @@ class Metadata:
         self.sizes = sizes
         self.formats = formats  
         self.version = version
+        self.url = url
         self.descriptions = list(descriptions)
         self.geolocations = list(geolocations)
         self.funding_references = list(funding_references)

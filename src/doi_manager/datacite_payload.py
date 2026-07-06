@@ -48,6 +48,7 @@ def generate_datacite_payload(record: Record, doi_prefix: str) -> dict:
         "sizes": metadata.sizes,
         "formats": metadata.formats,
         "version": metadata.version,
+        "url": metadata.url,
         "descriptions": [
             _description_to_payload(description)
             for description in metadata.descriptions

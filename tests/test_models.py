@@ -254,7 +254,7 @@ class MetadataTest(unittest.TestCase):
         """Checks that name identifiers must use an allowed prefix."""
         with self.assertRaises(ValueError):
             NameIdentifier(
-                name_identifier="https://example.com/0000-0001-2345-6789",
+                name_identifier="nonwebterm",
                 name_identifier_scheme="ORCID",
             )
 
@@ -1556,6 +1556,20 @@ class MetadataTest(unittest.TestCase):
         self.assertEqual(item.descriptions, [])
         self.assertEqual(item.funding_references, [])
         self.assertEqual(item.geolocations, [])
+        self.assertIsNone(item.url)
+
+    def test_metadata_stores_url(self):
+        """Checks that a resource can store a landing page URL."""
+        item = Metadata(
+            creators=[Creator(creator_name="Ada Lovelace", name_type="Personal")],
+            titles=[Title(title="Example resource")],
+            publisher=Publisher(name="Example Publisher"),
+            publication_year="2026",
+            types=self.example_types(),
+            url="https://example.com/resources/123",
+        )
+
+        self.assertEqual(item.url, "https://example.com/resources/123")
 
     def test_metadata_stores_custom_language(self):
         """Checks that a resource can store an explicit language."""
@@ -2644,6 +2658,34 @@ class MetadataTest(unittest.TestCase):
                 types=self.example_types(),
                 version = [3.2]
             )
+
+    def test_metadata_url_must_be_string(self):
+        """Checks that resource URL must be a string."""
+        with self.assertRaises(TypeError):
+            Metadata(
+                creators=[Creator(creator_name="Ada Lovelace", name_type="Personal")],
+                titles=[Title(title="Example resource")],
+                publisher=Publisher(name="Example Publisher"),
+                publication_year="2026",
+                types=self.example_types(),
+                url=123,
+            )
+
+    def test_metadata_url_must_start_with_http_or_https(self):
+        """Checks that resource URL must use an HTTP(S) scheme."""
+        for url in ["example.com/resources/123", "ftp://example.com/resources/123"]:
+            with self.subTest(url=url):
+                with self.assertRaises(ValueError):
+                    Metadata(
+                        creators=[
+                            Creator(creator_name="Ada Lovelace", name_type="Personal")
+                        ],
+                        titles=[Title(title="Example resource")],
+                        publisher=Publisher(name="Example Publisher"),
+                        publication_year="2026",
+                        types=self.example_types(),
+                        url=url,
+                    )
 
 
 if __name__ == "__main__":
