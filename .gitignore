@@ -36,3 +36,5 @@ config.py
 datacite_cleanup/
 todos.txt
 notes.txt
+config.py
+example.py
