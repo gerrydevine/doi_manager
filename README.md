@@ -196,7 +196,7 @@ metadata = Metadata(
 record = Record(metadata=metadata)
 identifier = create_draft_and_assign_doi(record)
 
-print(identifier.identifier_value)
+print(identifier['data']['id'])
 ```
 
 `create_draft_and_assign_doi` creates a __draft__ record in DataCite, generates a DOI and returns the Datacite response.
