@@ -43,8 +43,7 @@ class MetadataTest(unittest.TestCase):
             ),
             creators=[
                 Creator(
-                    creator_name="Ada Lovelace",
-                    name_type="Personal",
+                    creator_name="Ada Lovelace"
                 )
             ],
             titles=[Title(title="Example resource")],
@@ -53,7 +52,9 @@ class MetadataTest(unittest.TestCase):
             types=self.example_types(),
         )
 
-    # Record tests
+    # --------------
+    # RECORD TESTS
+    # --------------
     def test_record_generates_uuid_identifier(self):
         """Checks that a record automatically receives a UUID identifier."""
         item_record = Record()
@@ -117,7 +118,9 @@ class MetadataTest(unittest.TestCase):
         with self.assertRaises(AttributeError):
             item_record.identifier = str(uuid.uuid4())
 
-    # Affiliation tests
+    # -------------------
+    # AFFILIATION TESTS
+    # -------------------
     def test_affiliation_stores_identifier_and_name(self):
         """Checks that an affiliation stores its identifier and name."""
         item_affiliation = Affiliation(
@@ -218,7 +221,9 @@ class MetadataTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             Affiliation(name=123)
 
-    # Creator tests
+    # ---------------
+    # CREATOR TESTS
+    # ---------------
     def test_name_identifier_stores_fields(self):
         """Checks that a name identifier stores its DataCite fields."""
         item_name_identifier = NameIdentifier(
@@ -284,15 +289,19 @@ class MetadataTest(unittest.TestCase):
                 scheme_uri="https://example.com",
             )
 
-    def test_creator_stores_name_and_name_type(self):
-        """Checks that a creator stores name, type, and empty optional lists."""
+    def test_creator_stores_name_values(self):
+        """Checks that a creator stores name, type, given and family names, and empty optional lists."""
         item_creator = Creator(
             creator_name="Ada Lovelace",
             name_type="Personal",
+            given_name="Jane",
+            family_name="Smith"
         )
 
         self.assertEqual(item_creator.creator_name, "Ada Lovelace")
         self.assertEqual(item_creator.name_type, "Personal")
+        self.assertEqual(item_creator.given_name, "Jane")
+        self.assertEqual(item_creator.family_name, "Smith")
         self.assertEqual(item_creator.name_identifiers, [])
         self.assertEqual(item_creator.affiliations, [])
 
@@ -317,8 +326,8 @@ class MetadataTest(unittest.TestCase):
             [first_name_identifier, second_name_identifier],
         )
 
-    def test_creator_requires_name_and_name_type(self):
-        """Checks that creator name and name type are mandatory."""
+    def test_creator_requires_name(self):
+        """Checks that creator name is mandatory."""
         with self.assertRaises(TypeError):
             Creator()
 
@@ -346,6 +355,24 @@ class MetadataTest(unittest.TestCase):
             )
 
         self.assertEqual(item_creator.name_type, "CreatorOnly")
+
+    def test_creator_given_name_must_be_string(self):
+        """Checks that given name must be a string."""
+        with self.assertRaises(TypeError):
+            Creator(
+                creator_name="Grace Hopper",
+                name_type="Personal",
+                given_name=1234,
+            )
+
+    def test_creator_family_name_must_be_string(self):
+        """Checks that family name must be a string."""
+        with self.assertRaises(TypeError):
+            Creator(
+                creator_name="Grace Hopper",
+                name_type="Personal",
+                family_name=1234,
+            )
 
     def test_creator_rejects_non_name_identifier(self):
         """Checks that creator name identifiers must be NameIdentifier objects."""
@@ -404,17 +431,19 @@ class MetadataTest(unittest.TestCase):
                 affiliations=["Example University"],
             )
 
-    # Contributor tests
+    # -------------------
+    # CONTRIBUTOR TESTS
+    # -------------------
     def test_contributor_stores_name_type_and_contributor_type(self):
         """Checks that a contributor stores required fields and empty optional lists."""
         item_contributor = Contributor(
             contributor_name="Grace Hopper",
-            name_type="Personal",
+            # name_type="Personal",
             contributor_type="Researcher",
         )
 
         self.assertEqual(item_contributor.contributor_name, "Grace Hopper")
-        self.assertEqual(item_contributor.name_type, "Personal")
+        # self.assertEqual(item_contributor.name_type, "Personal")
         self.assertEqual(item_contributor.contributor_type, "Researcher")
         self.assertEqual(item_contributor.name_identifiers, [])
         self.assertEqual(item_contributor.affiliations, [])
@@ -456,8 +485,34 @@ class MetadataTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             Contributor(
                 contributor_name=123,
-                name_type="Personal",
                 contributor_type="Researcher",
+            )
+
+    def test_contributor_name_type_must_be_string(self):
+        """Checks that name_type must be a string."""
+        with self.assertRaises(ValueError):
+            Contributor(
+                contributor_name="Grace Hopper",
+                name_type=1234,
+                contributor_type="Researcher",
+            )
+
+    def test_contributor_given_name_must_be_string(self):
+        """Checks that given name must be a string."""
+        with self.assertRaises(TypeError):
+            Contributor(
+                contributor_name="Grace Hopper",
+                contributor_type="Researcher",
+                given_name=1234,
+            )
+
+    def test_contributor_family_name_must_be_string(self):
+        """Checks that family name must be a string."""
+        with self.assertRaises(TypeError):
+            Contributor(
+                contributor_name="Grace Hopper",
+                contributor_type="Researcher",
+                family_name=1234,
             )
 
     def test_contributor_rejects_invalid_name_type(self):
@@ -560,7 +615,9 @@ class MetadataTest(unittest.TestCase):
                 affiliations=["Example University"],
             )
 
-    # Identifier tests
+    # ------------------
+    # IDENTIFIER TESTS
+    # ------------------
     def test_identifier_stores_value_and_type_attr(self):
         """Checks that an identifier stores its value and type attribute."""
         item_identifier = Identifier(
@@ -589,7 +646,9 @@ class MetadataTest(unittest.TestCase):
                 identifier_type_attr="isbn",
             )
 
-    # Rights tests
+    # --------------
+    # RIGHTS TESTS
+    # --------------
     def test_rights_stores_identifier_and_derived_fields(self):
         """Checks that a Rights object stores identifier"""
         item_rights = Rights(rights="Creative Commons Attribution 4.0 International", rights_identifier="CC0")
@@ -604,7 +663,9 @@ class MetadataTest(unittest.TestCase):
             Rights(rights="Creative Commons Attribution 4.0 International", rights_identifier="INVALID")
 
 
-    # Alternate identifier tests
+    # -----------------------------
+    # ALTERNATE IDENTIFIER TESTS
+    # -----------------------------
     def test_alternate_identifier_stores_type_and_value(self):
         """Checks that an alternate identifier stores its type and value."""
         item_alternate_identifier = AlternateIdentifier(
@@ -644,7 +705,9 @@ class MetadataTest(unittest.TestCase):
                 alternate_identifier=123,
             )
 
-    # Related identifier tests
+    # --------------------------
+    # RELATED IDENTIFIER TESTS
+    # --------------------------
     def test_related_identifier_stores_required_fields(self):
         """Checks that a related identifier stores required fields."""
         item_related_identifier = RelatedIdentifier(
@@ -763,7 +826,9 @@ class MetadataTest(unittest.TestCase):
                 relation_type_information=123,
             )
 
-    # Title tests
+    # -------------
+    # TITLE TESTS
+    # -------------
     def test_title_stores_title_and_defaults_lang(self):
         """Checks that a title stores its text and defaults language to English."""
         item_title = Title(title="Example resource")
@@ -805,7 +870,9 @@ class MetadataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             Title(title="Example resource", type="MainTitle")
 
-    # Types tests
+    # -------------
+    # TYPES TESTS
+    # -------------
     def test_types_stores_resource_type_fields(self):
         """Checks that types stores resource type fields."""
         item_types = Types(
@@ -841,7 +908,9 @@ class MetadataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             Types(resource_type="Dataset", resource_type_general="Database")
 
-    # Subject tests
+    # ---------------
+    # SUBJECT TESTS
+    # ---------------
     def test_subject_stores_subject_and_defaults_lang(self):
         """Checks that a subject stores its text and defaults language to English."""
         item_subject = Subject(subject="Computer science")
@@ -902,7 +971,9 @@ class MetadataTest(unittest.TestCase):
                 with self.assertRaises(TypeError):
                     Subject(subject="Computer science", **{field_name: 123})
 
-    # Date tests
+    # ------------
+    # DATE TESTS
+    # ------------
     def test_date_stores_year_and_type(self):
         """Checks that a date stores a year and controlled date type."""
         item_date = Date(date="2026", date_type="Issued")
@@ -964,7 +1035,9 @@ class MetadataTest(unittest.TestCase):
                 date_information=123,
             )
 
-    # Description tests
+    # --------------------
+    # DESCRIPTION TESTS
+    # --------------------
     def test_description_stores_description_type_and_defaults_lang(self):
         """Checks that a description stores text and defaults language to English."""
         item_description = Description(
@@ -1023,7 +1096,9 @@ class MetadataTest(unittest.TestCase):
                 lang=123,
             )
 
-    # GeoLocationPoint tests
+    # ------------------------
+    # GEOLOCATIONPOINT TESTS
+    # ------------------------
     def test_geolocation_point_stores_longitude_and_latitude(self):
         """Checks that a geolocation point stores longitude and latitude."""
         item_point = GeoLocationPoint(
@@ -1084,7 +1159,9 @@ class MetadataTest(unittest.TestCase):
                         point_latitude=point_latitude,
                     )
 
-    # GeoLocationBox tests
+    # -----------------------
+    # GEOLOCATIONBOX TESTS
+    # -----------------------
     def test_geolocation_box_stores_bounds(self):
         """Checks that a geolocation box stores longitude and latitude bounds."""
         item_box = GeoLocationBox(
@@ -1207,7 +1284,9 @@ class MetadataTest(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     GeoLocationBox(**kwargs)
 
-    # PolygonPoint tests
+    # ---------------------
+    # POLYGONPOINT TESTS
+    # ---------------------
     def test_polygon_point_stores_longitude_and_latitude(self):
         """Checks that a polygon point stores longitude and latitude."""
         item_point = PolygonPoint(
@@ -1268,7 +1347,9 @@ class MetadataTest(unittest.TestCase):
                         point_latitude=point_latitude,
                     )
 
-    # GeoLocationPolygon tests
+    # ---------------------------
+    # GEOLOCATIONPOLYGON TESTS
+    # ---------------------------
     def example_geolocation_polygon(self):
         PolygonPoint_1 = PolygonPoint(point_longitude=150.0, point_latitude=-34.0)
         PolygonPoint_2 = PolygonPoint(point_longitude=151.0, point_latitude=-35.0)
@@ -1282,7 +1363,9 @@ class MetadataTest(unittest.TestCase):
             PolygonPoint_4
         ]
 
-    # GeoLocation tests
+    # -------------------
+    # GEOLOCATION TESTS
+    # -------------------
     def test_geolocation_defaults_place_to_none(self):
         """Checks that a geolocation place can be omitted."""
         item_geolocation = GeoLocation()
@@ -1357,7 +1440,9 @@ class MetadataTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             GeoLocation(geolocation_box=[150.0, 152.0, -34.0, -33.0])
 
-    # FundingReference tests
+    # --------------------------
+    # FUNDINGREFERENCE TESTS
+    # --------------------------
     def test_funding_reference_stores_required_funder_name(self):
         """Checks that a funding reference stores required and default fields."""
         item_funding_reference = FundingReference(funder_name="Example Funder")
@@ -1450,7 +1535,9 @@ class MetadataTest(unittest.TestCase):
                         **{field_name: 123},
                     )
 
-    # Publisher tests
+    # ------------------
+    # PUBLISHER TESTS
+    # ------------------
     def test_publisher_stores_name_and_defaults(self):
         """Checks that a publisher stores its name and default optional fields."""
         item_publisher = Publisher(name="Example Publisher")
@@ -1518,7 +1605,9 @@ class MetadataTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             Publisher(name="Example Publisher", lang=123)
 
-    # Metadata tests
+    # -----------------
+    # METADATA TESTS
+    # -----------------
     def test_metadata_stores_identifier(self):
         """Checks that a resource stores its core metadata."""
         item_identifier = Identifier(

@@ -539,7 +539,7 @@ class Creator:
         self,
         *,
         creator_name: str,
-        name_type: str,
+        name_type: str | None = None,
         lang: str | None = None,
         given_name: str | None = None,
         family_name: str | None = None,
@@ -549,9 +549,15 @@ class Creator:
         if not isinstance(creator_name, str):
             raise TypeError("creator_name must be a string")
 
-        if name_type not in CREATOR_NAME_TYPE_VALUES:
+        if name_type is not None and name_type not in CREATOR_NAME_TYPE_VALUES:
             values = ", ".join(CREATOR_NAME_TYPE_VALUES)
             raise ValueError(f"name_type must be one of: {values}")
+
+        if given_name is not None and not isinstance(given_name, str):
+            raise TypeError("given_name must be a string")
+
+        if family_name is not None and not isinstance(family_name, str):
+            raise TypeError("family_name must be a string")
 
         if name_identifiers is None:
             name_identifiers = []
@@ -589,15 +595,18 @@ class Contributor:
         self,
         *,
         contributor_name: str,
-        name_type: str,
         contributor_type: str,
+        name_type: str | None = None,
+        lang: str | None = None,
+        given_name: str | None = None,
+        family_name: str | None = None,
         name_identifiers: list[NameIdentifier] | None = None,
         affiliations: list[Affiliation] | None = None,
     ):
         if not isinstance(contributor_name, str):
             raise TypeError("contributor_name must be a string")
 
-        if name_type not in CONTRIBUTOR_NAME_TYPE_VALUES:
+        if name_type is not None and name_type not in CONTRIBUTOR_NAME_TYPE_VALUES:
             values = ", ".join(CONTRIBUTOR_NAME_TYPE_VALUES)
             raise ValueError(f"name_type must be one of: {values}")
 
@@ -607,6 +616,12 @@ class Contributor:
         if contributor_type not in CONTRIBUTOR_TYPE_VALUES:
             values = ", ".join(CONTRIBUTOR_TYPE_VALUES)
             raise ValueError(f"contributor_type must be one of: {values}")
+
+        if given_name is not None and not isinstance(given_name, str):
+            raise TypeError("contributor_name must be a string")
+
+        if family_name is not None and not isinstance(family_name, str):
+            raise TypeError("family_name must be a string")
 
         if name_identifiers is None:
             name_identifiers = []
@@ -631,8 +646,11 @@ class Contributor:
                 raise TypeError("affiliations must contain only affiliation objects")
 
         self.contributor_name = contributor_name
-        self.name_type = name_type
         self.contributor_type = contributor_type
+        self.name_type = name_type
+        self.lang = lang
+        self.given_name = given_name
+        self.family_name = family_name
         self.name_identifiers = list(name_identifiers)
         self.affiliations = list(affiliations)
 

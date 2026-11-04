@@ -90,6 +90,9 @@ def _creator_to_payload(creator) -> dict:
         {
             "name": creator.creator_name,
             "nameType": creator.name_type,
+            "givenName": creator.given_name,
+            "familyName": creator.family_name,
+            "lang": creator.lang,
             "nameIdentifiers": [
                 _name_identifier_to_payload(name_identifier)
                 for name_identifier in creator.name_identifiers
@@ -108,6 +111,9 @@ def _contributor_to_payload(contributor) -> dict:
             "name": contributor.contributor_name,
             "nameType": contributor.name_type,
             "contributorType": contributor.contributor_type,
+            "givenName": contributor.given_name,
+            "familyName": contributor.family_name,
+            "lang": contributor.lang,
             "nameIdentifiers": [
                 _name_identifier_to_payload(name_identifier)
                 for name_identifier in contributor.name_identifiers

@@ -51,6 +51,9 @@ class DataCitePayloadTest(unittest.TestCase):
                 Creator(
                     creator_name="Ada Lovelace",
                     name_type="Personal",
+                    given_name="Ada",
+                    family_name="Lovelace",
+                    lang="en",
                     name_identifiers=[
                         NameIdentifier(
                             name_identifier="https://orcid.org/0000-0001-2345-6789",
@@ -87,6 +90,8 @@ class DataCitePayloadTest(unittest.TestCase):
                     contributor_name="Grace Hopper",
                     name_type="Personal",
                     contributor_type="Researcher",
+                    given_name="Grace",
+                    family_name="Hopper",
                     name_identifiers=[
                         NameIdentifier(
                             name_identifier="https://orcid.org/0000-0002-0000-0000",
@@ -175,6 +180,7 @@ class DataCitePayloadTest(unittest.TestCase):
         self.assertEqual(attrs["prefix"], "10.80402")
         self.assertEqual(attrs["doi"], "10.123/example")
         self.assertEqual(attrs["creators"][0]["name"], "Ada Lovelace")
+        self.assertEqual(attrs["creators"][0]["givenName"], "Ada")
         self.assertEqual(attrs["titles"][0]["title"], "Example resource")
         self.assertEqual(attrs["publisher"]["name"], "Example Publisher")
         self.assertEqual(
