@@ -92,6 +92,7 @@ class DataCitePayloadTest(unittest.TestCase):
                     contributor_type="Researcher",
                     given_name="Grace",
                     family_name="Hopper",
+                    lang="en",
                     name_identifiers=[
                         NameIdentifier(
                             name_identifier="https://orcid.org/0000-0002-0000-0000",
@@ -181,6 +182,8 @@ class DataCitePayloadTest(unittest.TestCase):
         self.assertEqual(attrs["doi"], "10.123/example")
         self.assertEqual(attrs["creators"][0]["name"], "Ada Lovelace")
         self.assertEqual(attrs["creators"][0]["givenName"], "Ada")
+        self.assertEqual(attrs["creators"][0]["familyName"], "Lovelace")
+        self.assertEqual(attrs["creators"][0]["lang"], "en")
         self.assertEqual(attrs["titles"][0]["title"], "Example resource")
         self.assertEqual(attrs["publisher"]["name"], "Example Publisher")
         self.assertEqual(
@@ -209,6 +212,9 @@ class DataCitePayloadTest(unittest.TestCase):
         )
         self.assertEqual(attrs["subjects"][0]["subject"], "Metadata")
         self.assertEqual(attrs["contributors"][0]["contributorType"], "Researcher")
+        self.assertEqual(attrs["contributors"][0]["givenName"], "Grace")
+        self.assertEqual(attrs["contributors"][0]["familyName"], "Hopper")
+        self.assertEqual(attrs["contributors"][0]["lang"], "en")
         self.assertEqual(attrs["dates"][0]["dateType"], "Updated")
         self.assertEqual(
             attrs["alternateIdentifiers"][0]["alternateIdentifier"],
