@@ -374,14 +374,14 @@ class Rights:
     def __init__(
         self,
         *,
-        rights: str,
+        rights: str | None = None,
         rights_uri: str | None = None,
         rights_identifier: str | None = None,
         rights_identifier_scheme: str | None = None,
         scheme_uri: str | None = None,
         lang: str | None = None,
     ):
-        if rights_identifier not in RIGHTS_IDENTIFIER_VALUES:
+        if rights_identifier is not None and rights_identifier not in RIGHTS_IDENTIFIER_VALUES:
             values = ", ".join(RIGHTS_IDENTIFIER_VALUES)
             raise ValueError(f"rights_identifier must be one of: {values}")
 
